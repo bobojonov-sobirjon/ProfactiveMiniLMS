@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - Profactive{% endblock %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="max-sm:pt-15 max-md:pt-20 max-lg:pt-32.5 mb-12 md:mb-20 lg:mb-31">
+      <div class="relative flex max-md:flex-col md:items-center justify-between gap-x-7 gap-y-8 lg:gap-y-13.5">
+        <!-- Left -->
+        <div class="flex-1 w-full max-w-145" data-aos="fade-right" data-aos-delay="100">
+          <p class="font-medium text-base lg:text-xl text-white/50 mb-3.5">
+            Получайте 16% с каждой продажи!
+          </p>
+
+          <h1 class="font-bold text-2xl md:text-basic-40 lg:text-[53px]/[64px] mb-11 lg:mb-13.5">
+            Учебный центр
+            <span class="text-gradient-display">Profactive</span>
+          </h1>
+
+          <a href="{% url 'about' %}"
+            class="block w-fit bg-gradient-display text-primary hover-opacity-75 rounded-[14px] py-3.5 lg:py-5 px-8 lg:px-13.5">
+            Узнать подробнее
+          </a>
+        </div>
+        <!-- Right -->
+        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl" data-aos="fade-left" data-aos-delay="200">
+          <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/main-hero.png' %}" alt="img">
+
+        </div>
+
+        <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+              fill="url(#paint0_linear_0_28)" />
+            <defs>
+              <linearGradient id="paint0_linear_0_28" x1="49.6592" y1="7.88094" x2="8.16231" y2="34.9448"
+                gradientUnits="userSpaceOnUse">
+                <stop stop-color="#AB803B" />
+                <stop offset="0.235294" stop-color="#CDB14F" />
+                <stop offset="0.490196" stop-color="#F0E263" />
+                <stop offset="0.733333" stop-color="#D9B84A" />
+                <stop offset="1" stop-color="#C28D31" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Каталог курсов -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div>
+        <h2 class="text-2xl md:text-3xl lg:text-basic-40 md:text-center mb-5 md:mb-8 lg:mb-11" data-aos="fade-up">
+          Каталог <span class="text-gradient-display">курсов</span>
+        </h2>
+        <div class="swiper main-catalog__swiper !px-4 md:!px-6 lg:!px-0 !-mx-4 md:!-mx-6 lg:!-mx-8 xl:!mx-0" data-aos="fade-up" data-aos-delay="200">
+          <div class="swiper-wrapper">
+            {% for category in main_categories %}
+            <div class="swiper-slide">
+              <div class="bg-white rounded-3xl p-4 lg:p-6 min-h-50 md:min-h-65 lg:min-h-75.5">
+                <div class="bg-gradient-display size-15 md:size-18 lg:size-21 flex items-center justify-center rounded-3xl mb-4 lg:mb-6">
+                  {% if category.icon %}
+                    <img src="{{ category.icon.url }}" alt="{{ category.name }}" class="w-7 lg:w-10 h-7 lg:h-10 object-contain">
+                  {% else %}
+                    <!-- Default icon if no custom icon is uploaded -->
+                    <svg class="w-7 lg:w-10 h-7 lg:h-10" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 0L24.1421 15.8579L40 20L24.1421 24.1421L20 40L15.8579 24.1421L0 20L15.8579 15.8579L20 0Z" fill="#1E1E1E"/>
+                    </svg>
+                  {% endif %}
+                </div>
+
+                <h3 class="text-lg lg:text-basic-23/8.75 text-primary mb-5 md:mb-8 lg:mb-11">
+                  {{ category.name }}
+                </h3>
+
+                <p class="text-primary/50">
+                  {{ category.courses_set.count }} курсов
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Популярные курсы -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div>
+        <h2 class="text-2xl md:text-3xl lg:text-basic-40 md:text-center mb-5 md:mb-8 lg:mb-11">
+          <span class="text-gradient-display">Популярные </span>
+          курсы
+        </h2>
+
+        <div x-data="showMore(6)">
+          <div
+            class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-11 mb-6 md:mb-9 lg:mb-13.5 font-semibold">
+            {% for course in popular_courses %}
+            <div class="group bg-white rounded-3xl overflow-hidden flex flex-col h-full">
+              <div class="h-40 md:h-56 w-full relative overflow-hidden">
+                {% if course.image %}
+                  <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
+                       src="{{ course.image.url }}" alt="{{ course.name }}">
+                {% else %}
+                  <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
+                       src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
+                {% endif %}
+              </div>
+              <div class="p-4 lg:p-6 flex flex-col flex-1">
+                <h4 class="text-primary text-lg lg:text-basic-23/8.75 mb-2 md:mb-3.5" style="line-clamp: 1; height: 60px;">
+                  {{ course.name }}
+                </h4>
+                <p class="text-primary/50 lg:text-lg/7 mb-5 md:mb-8 lg:mb-11 font-medium flex-1">
+                  {{ course.description|truncatewords:5 }}
+                </p>
+
+                <a href="{% url 'courses:course_detail' course.id %}"
+                class="block bg-gradient-display hover-opacity-75 text-primary text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5 mt-auto">
+                Подробнее
+              </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Уже зарегистрированы в реферальной программе? -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div class="bg-gradient-banner min-h-111 rounded-3xl overflow-hidden">
+        <div class="relative flex max-lg:flex-col lg:items-center justify-between gap-x-7 gap-y-6">
+          <!-- Left -->
+          <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1" data-aos="fade-right" data-aos-delay="100">
+            <div class="w-full lg:max-w-145">
+              <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
+                Получайте 16% с каждой продажи!
+              </p>
+
+              <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">
+                Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
+              </h2>
+
+              <button class="bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
+                Узнать подробнее
+              </button>
+            </div>
+          </div>
+          <!-- Right -->
+          <div class="md:max-w-90.5 relative max-lg:mx-auto lg:mr-10" data-aos="fade-left" data-aos-delay="200">
+            <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/banner-girl.png' %}" alt="img">
+          </div>
+
+          <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full text-primary">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+          <div class="max-lg:hidden absolute right-0 top-0 z-0 -translate-x-11 translate-y-11">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Почему стоит выбрать -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div>
+        <h2 class="text-2xl md:text-3xl lg:text-basic-40 md:text-center mb-5 md:mb-8 lg:mb-11" data-aos="fade-up">
+          Почему стоит выбрать
+          <span class="text-gradient-display">Profactive</span>
+        </h2>
+
+        <!-- Vieo Play -->
+        <div class="relative aspect-square md:aspect-[1200/544] max-h-136 overflow-hidden rounded-3xl" data-aos="zoom-in" data-aos-delay="200">
+          <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/popular-2.jpg' %}" alt="Img">
+          <div
+            class="flex items-center justify-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
+            <div
+              class="circle relative rounded-full overflow-hidden size-18 md:size-31 lg:size-41 flex items-center justify-center">
+              <button
+                class="relative z-20 bg-gradient-display size-12 md:size-17.5 lg:size-23.5 rounded-full flex items-center justify-center shrink-0">
+                <svg class="md:ml-2 h-5 md:h-8 w-6 md:w-9 lg:h-11 lg:w-12.5" viewBox="0 0 33 44" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M33 22L0 43.6506V0.349365L33 22Z" fill="#28282C" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Каталог курсов - Profactive{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-8 md:py-12 lg:py-16">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-6">
+      <p class="text-white/70 text-lg md:text-xl mb-4">Получайте 16% с каждой продажи!</p>
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+        <span class="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Каталог</span>
+        <span class="text-white">курсов</span>
+      </h1>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-6 md:py-8 lg:py-10">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col lg:flex-row gap-8">
+      
+      <!-- Left Sidebar - Filters -->
+      <div class="lg:w-1/4">
+        <div class="bg-gray-800 rounded-2xl p-6 sticky top-4">
+          <h3 class="text-xl font-bold text-white mb-6">Фильтры</h3>
+          
+          <!-- Search -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-white/80 mb-3">Поиск курсов</label>
+            <input type="text" 
+                   name="search" 
+                   placeholder="Поиск курсов..." 
+                   class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+          </div>
+
+          <!-- Categories -->
+          <div class="space-y-4">
+            <h4 class="font-semibold text-white mb-4">Категории</h4>
+            
+            {% for category in main_categories %}
+            <div x-data="{ open: false }" class="w-full relative" @click.outside="open = false">
+              <button @click="open = !open; toggleCategory('{{ category.id }}')"
+                class="text-left w-full flex items-center justify-between border-b border-white/20 pb-3.5 hover:border-white/40 transition-colors">
+                <span class="md:text-lg/5 lg:text-xl text-white font-medium">
+                  {{ category.name }}
+                </span>
+
+                <div class="p-2">
+                  <svg :class="open ? '-rotate-180' : ''"
+                    class="transition-transform duration-300 w-4 lg:w-5 h-2 md:h-3" viewBox="0 0 20 12" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M10 7.66021L17.0125 0.647705L19.0157 2.65087L10 11.6665L0.984375 2.65087L2.98754 0.647705L10 7.66021Z"
+                      fill="url(#paint0_linear_2052_80)" />
+                    <defs>
+                      <linearGradient id="paint0_linear_2052_80" x1="14.9753" y1="2.00456" x2="7.18476" y2="10.3191"
+                        gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#AB803B" />
+                        <stop offset="0.235294" stop-color="#CDB14F" />
+                        <stop offset="0.490196" stop-color="#F0E263" />
+                        <stop offset="0.733333" stop-color="#D9B84A" />
+                        <stop offset="1" stop-color="#C28D31" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Accordion Content -->
+              <div x-show="open" :class="open ? '!block' : 'hidden'" class="hidden mt-4" @click.stop>
+                <div class="space-y-3 pl-2">
+                  <label class="flex items-center space-x-3 cursor-pointer group">
+                    <input type="checkbox" 
+                           class="main-category-checkbox w-4 h-4 text-primary bg-gray-700 border-gray-500 rounded focus:ring-primary/20 focus:ring-2"
+                           data-category-id="{{ category.id }}">
+                    <span class="text-sm text-white/80 group-hover:text-white transition-colors">Все {{ category.name }}</span>
+                  </label>
+                  
+                  {% for subcategory in category.categories_set.all %}
+                  <label class="flex items-center space-x-3 cursor-pointer group">
+                    <input type="checkbox" 
+                           class="sub-category-checkbox w-4 h-4 text-primary bg-gray-700 border-gray-500 rounded focus:ring-primary/20 focus:ring-2"
+                           data-category-id="{{ subcategory.id }}" 
+                           data-main-category-id="{{ category.id }}">
+                    <span class="text-sm text-white/70 group-hover:text-white/90 transition-colors">{{ subcategory.name }}</span>
+                  </label>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Popular Filter -->
+          <div class="mt-6 pt-6 border-t border-white/20">
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input type="checkbox" 
+                     id="popular-filter"
+                     class="w-4 h-4 text-primary bg-gray-700 border-gray-500 rounded focus:ring-primary/20 focus:ring-2">
+              <span class="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Только популярные курсы</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Content - Courses Grid -->
+      <div class="lg:w-3/4">
+        <div id="coursesContainer">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for course in courses %}
+            <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div class="aspect-video overflow-hidden">
+                {% if course.image %}
+                  <img src="{{ course.image.url }}" 
+                       alt="{{ course.name }}"
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                {% else %}
+                  <img src="{% static 'assets/images/main-hero.png' %}" 
+                       alt="{{ course.name }}"
+                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                {% endif %}
+              </div>
+              
+              <div class="p-6">
+                <h3 class="text-xl font-bold text-primary mb-3 line-clamp-2 h-15">{{ course.name }}</h3>
+                <p class="text-gray-800 text-sm mb-4 line-clamp-3">{{ course.description|truncatewords:8 }}</p>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    {% if course.is_popular %}
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      Популярный
+                    </span>
+                    {% endif %}
+                    <span class="text-primary/60 text-sm">{{ course.category.name }}</span>
+                  </div>
+                  
+                  <a href="{% url 'courses:course_detail' course.id %}"
+                     class="block bg-gradient-display hover-opacity-75 text-primary text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5 px-8">
+                    Подробнее
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="col-span-2 text-center py-16">
+              <div class="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <svg class="w-12 h-12 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary mb-2">Курсы не найдены</h3>
+              <p class="text-primary/60">Попробуйте изменить параметры поиска</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Referral Banner -->
+<section class="mb-12 md:mb-20 lg:mb-31">
+  <div class="bg-gradient-banner min-h-111 rounded-3xl overflow-hidden">
+    <div class="relative flex max-lg:flex-col lg:items-center justify-between gap-x-7 gap-y-6">
+      <!-- Left -->
+      <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1">
+        <div class="w-full lg:max-w-145">
+          <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
+            Получайте 16% с каждой продажи!
+          </p>
+
+          <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">
+            Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
+          </h2>
+
+          <button class="bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
+            Узнать подробнее
+          </button>
+        </div>
+      </div>
+      <!-- Right -->
+      <div class="md:max-w-90.5 relative max-lg:mx-auto lg:mr-10">
+        <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/banner-girl.png' %}" alt="img">
+      </div>
+
+      <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full text-primary">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+            fill="#1E1E1E" fill-opacity="0.882353" />
+        </svg>
+      </div>
+      <div class="max-lg:hidden absolute right-0 top-0 z-0 -translate-x-11 translate-y-11">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+            fill="#1E1E1E" fill-opacity="0.882353" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="search"]');
+    const mainCategoryCheckboxes = document.querySelectorAll('.main-category-checkbox');
+    const subCategoryCheckboxes = document.querySelectorAll('.sub-category-checkbox');
+    const popularFilter = document.getElementById('popular-filter');
+    const coursesContainer = document.getElementById('coursesContainer');
+    
+    if (!searchInput || !coursesContainer) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    // Search with debounce
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(filterCourses, 300);
+    });
+
+    // Category change handlers
+    mainCategoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck other main categories
+                mainCategoryCheckboxes.forEach(cb => {
+                    if (cb !== this) cb.checked = false;
+                });
+                // Clear subcategories
+                subCategoryCheckboxes.forEach(cb => cb.checked = false);
+                // Load subcategories
+                loadSubcategories(this.dataset.categoryId);
+            }
+            filterCourses();
+        });
+    });
+
+    subCategoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                // Uncheck main category
+                const mainCheckbox = document.querySelector(`input[data-category-id="${this.dataset.mainCategoryId}"]`);
+                if (mainCheckbox) mainCheckbox.checked = false;
+                // Uncheck other subcategories
+                subCategoryCheckboxes.forEach(cb => {
+                    if (cb.dataset.mainCategoryId === this.dataset.mainCategoryId && cb !== this) {
+                        cb.checked = false;
+                    }
+                });
+            }
+            filterCourses();
+        });
+    });
+
+    // Popular filter
+    if (popularFilter) {
+        popularFilter.addEventListener('change', filterCourses);
+    }
+
+    function toggleCategory(categoryId) {
+        // Load subcategories when opening
+        loadSubcategories(categoryId);
+    }
+
+    // Make toggleCategory globally available
+    window.toggleCategory = toggleCategory;
+
+    function loadSubcategories(mainCategoryId) {
+        // Check if subcategories are already loaded
+        const container = document.getElementById(`subcategories-${mainCategoryId}`);
+        if (container && container.querySelector('.sub-category-checkbox')) {
+            return; // Already loaded
+        }
+        
+        fetch(`/courses/api/subcategories/?main_category_id=${mainCategoryId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (container && data.subcategories) {
+                    // Clear existing subcategories except "All" checkbox
+                    const existingSubs = container.querySelectorAll('.sub-category-checkbox');
+                    existingSubs.forEach(sub => sub.remove());
+                    
+                    data.subcategories.forEach(sub => {
+                        const label = document.createElement('label');
+                        label.className = 'flex items-center space-x-3 cursor-pointer';
+                        label.innerHTML = `
+                            <input type="checkbox" 
+                                   class="sub-category-checkbox w-4 h-4 text-primary border-primary/30 rounded focus:ring-primary/20"
+                                   data-category-id="${sub.id}" 
+                                   data-main-category-id="${mainCategoryId}">
+                            <span class="text-sm text-gray-800">${sub.name}</span>
+                        `;
+                        container.appendChild(label);
+                        
+                        // Add event listener to new checkbox
+                        const newCheckbox = label.querySelector('.sub-category-checkbox');
+                        newCheckbox.addEventListener('change', function() {
+                            if (this.checked) {
+                                document.querySelector(`input[data-category-id="${mainCategoryId}"]`).checked = false;
+                                subCategoryCheckboxes.forEach(cb => {
+                                    if (cb.dataset.mainCategoryId === mainCategoryId && cb !== this) {
+                                        cb.checked = false;
+                                    }
+                                });
+                            }
+                            filterCourses();
+                        });
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading subcategories:', error));
+    }
+
+    function filterCourses() {
+        const searchQuery = searchInput.value.trim();
+        const selectedMainCategory = document.querySelector('.main-category-checkbox:checked');
+        const selectedSubCategory = document.querySelector('.sub-category-checkbox:checked');
+        const isPopular = popularFilter ? popularFilter.checked : false;
+
+        const params = new URLSearchParams();
+        if (searchQuery) params.append('search', searchQuery);
+        if (selectedMainCategory) params.append('main_category', selectedMainCategory.dataset.categoryId);
+        if (selectedSubCategory) params.append('sub_category', selectedSubCategory.dataset.categoryId);
+        if (isPopular) params.append('is_popular', 'true');
+
+        coursesContainer.innerHTML = `
+            <div class="flex justify-center items-center py-16">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <span class="ml-3 text-primary font-medium">Загрузка курсов...</span>
+            </div>
+        `;
+
+        fetch(`/course-catalogue/?${params.toString()}`, {
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        })
+        .then(response => response.ok ? response.text() : Promise.reject(`HTTP ${response.status}`))
+        .then(html => {
+            coursesContainer.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Filter error:', error);
+            coursesContainer.innerHTML = `
+                <div class="col-span-2 text-center py-16">
+                    <div class="w-24 h-24 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-primary mb-2">Ошибка загрузки</h3>
+                    <p class="text-primary/60">Попробуйте обновить страницу</p>
+                </div>
+            `;
+        });
+    }
+});
+</script>
+{% endblock %}

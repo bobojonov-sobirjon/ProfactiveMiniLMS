@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Блоги - Profactive{% endblock %}
+
+{% block content %}
+<!-- Мои курсы -->
+<section class="mb-12 md:mb-20 lg:mb-31 lg:pt-20">
+  <div>
+    <div class="mb-5 md:mb-8 lg:mb-11" data-aos="fade-up">
+      <p class="text-white/50 lg:text-xl mb-3.5">
+        Получайте 16% с каждой продажи! </p>
+      <h2 class=" text-2xl md:text-4xl lg:text-[54px]">
+        Мои
+        <span class="text-gradient-display"> Блоги</span>
+      </h2>
+    </div>
+
+    <div x-data="showMore(6)">
+      <div
+        class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-11 mb-6 md:mb-9 lg:mb-13.5 font-semibold" data-aos="fade-up" data-aos-delay="200">
+        <!-- Blog Posts -->
+        {% for blog in blogs %}
+        <div class="group bg-white rounded-3xl overflow-hidden" data-aos="fade-up" data-aos-delay="{% cycle '300' '400' '500' '600' '700' '800' %}">
+          <div class="h-40 md:h-56 w-full relative overflow-hidden">
+            {% if blog.image and blog.image.url %}
+            <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
+              src="{{ blog.image.url }}" alt="{{ blog.title }}">
+            {% else %}
+            <div class="relative z-0 size-full bg-gradient-to-br from-brand-yellow-500/20 to-brand-yellow-600/20 flex items-center justify-center">
+              <svg class="w-16 h-16 text-brand-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            {% endif %}
+          </div>
+          <div class="p-4 lg:p-6">
+            <h4 class="text-primary text-lg lg:text-basic-23/8.75 mb-2 md:mb-3.5">
+              {{ blog.title }}
+            </h4>
+            <p class="text-primary/50 lg:text-lg/7 mb-5 md:mb-8 lg:mb-11 font-medium">
+              {{ blog.description|truncatewords:20 }}
+            </p>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-20">
+          <p class="text-white/50 text-xl">Пока нет блогов</p>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .text-gradient-display {
+    background: linear-gradient(135deg, #AB803B 0%, #CDB14F 23.53%, #F0E263 49.02%, #D9B84A 73.33%, #C28D31 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
+{% endblock %}
+
+<script>
+  function showMore(step = 6) {
+    return {
+      step,
+      visible: step,
+      items: [],
+      buttonText: "Показать еще новости",
+
+      init() {
+        this.items = this.$el.querySelectorAll(".grid > div");
+        this.update();
+      },
+
+      update() {
+        this.items.forEach((el, i) => {
+          el.style.display = i < this.visible ? "block" : "none";
+        });
+
+        if (this.visible < this.items.length) {
+          this.buttonText = "Показать еще";
+        } else {
+          this.buttonText = "Скрыть новости";
+        }
+      },
+
+      toggle() {
+        if (this.visible < this.items.length) {
+          this.visible += this.step;
+        } else {
+          this.visible = this.step;
+        }
+        this.update();
+      }
+    }
+  }
+</script>
+

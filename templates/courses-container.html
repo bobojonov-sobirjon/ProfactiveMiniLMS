@@ -1,0 +1,50 @@
+{% load static %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {% for course in courses %}
+  <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div class="aspect-video overflow-hidden">
+      {% if course.image %}
+        <img src="{{ course.image.url }}" 
+             alt="{{ course.name }}"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+      {% else %}
+        <img src="{% static 'assets/images/main-hero.png' %}" 
+             alt="{{ course.name }}"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+      {% endif %}
+    </div>
+    
+    <div class="p-6">
+      <h3 class="text-xl font-bold text-primary mb-3 line-clamp-2">{{ course.name }}</h3>
+      <p class="text-gray-800 text-sm mb-4 line-clamp-3">{{ course.description|truncatewords:5 }}</p>
+      
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          {% if course.is_popular %}
+          <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            Популярный
+          </span>
+          {% endif %}
+          <span class="text-primary/60 text-sm">{{ course.category.name }}</span>
+        </div>
+        
+        <a href="{% url 'courses:course_detail' course.id %}"
+           class="block bg-gradient-display hover-opacity-75 text-primary text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5 px-8">
+          Подробнее
+        </a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-span-2 text-center py-16">
+    <div class="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-full flex items-center justify-center">
+      <svg class="w-12 h-12 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+      </svg>
+    </div>
+    <h3 class="text-xl font-semibold text-primary mb-2">Курсы не найдены</h3>
+    <p class="text-primary/60">Попробуйте изменить параметры поиска</p>
+  </div>
+  {% endfor %}
+</div>

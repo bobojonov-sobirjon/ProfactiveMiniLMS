@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Документация - Profactive{% endblock %}
+
+{% block content %}
+<section class="max-sm:pt-15 max-md:pt-20 max-lg:pt-32.5 mb-12 md:mb-20 lg:mb-31">
+  <div class="text-center">
+    <h1 class="font-bold text-2xl md:text-3xl lg:text-basic-40 mb-8">
+      <span class="text-gradient-display">Документация</span>
+    </h1>
+    <p class="text-lg text-white/70 max-w-3xl mx-auto">
+      Полезная документация и инструкции
+    </p>
+  </div>
+</section>
+
+<section class="mb-12 md:mb-20 lg:mb-31">
+  <div class="bg-white rounded-3xl p-8">
+    <h2 class="text-2xl font-bold text-primary mb-6">Документы</h2>
+    <div class="space-y-4">
+      <a href="#" class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+        <span class="text-primary">Пользовательское соглашение</span>
+        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

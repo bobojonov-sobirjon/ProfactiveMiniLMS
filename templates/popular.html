@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Популярные курсы - Profactive{% endblock %}
+
+{% block content %}
+<section class="max-sm:pt-15 max-md:pt-20 max-lg:pt-32.5 mb-12 md:mb-20 lg:mb-31">
+  <div class="text-center">
+    <h1 class="font-bold text-2xl md:text-3xl lg:text-basic-40 mb-8" data-aos="fade-up">
+      <span class="text-gradient-display">Популярные</span> курсы
+    </h1>
+    <p class="text-lg text-white/70 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+      Самые востребованные курсы среди наших студентов
+    </p>
+  </div>
+</section>
+
+<section class="mb-12 md:mb-20 lg:mb-31">
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+    <div class="bg-white rounded-3xl overflow-hidden" data-aos="fade-up" data-aos-delay="300">
+      <div class="h-48 w-full relative overflow-hidden">
+        <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/main-hero.png' %}" alt="Course">
+      </div>
+      <div class="p-6">
+        <h3 class="text-lg font-semibold text-primary mb-2">Веб-разработка</h3>
+        <p class="text-primary/70 text-sm mb-4">Изучите современные технологии</p>
+        <div class="flex items-center justify-between">
+          <span class="text-brand-yellow-500 font-semibold">49,000 ₽</span>
+          <a href="#" class="bg-gradient-display text-primary px-4 py-2 rounded-lg text-sm font-medium">Записаться</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Сертификат - {{ course.name }}{% endblock %}
+
+{% block content %}
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Certificate -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div class="max-w-4xl mx-auto">
+        <!-- Certificate Card -->
+        <div class="bg-white text-primary rounded-3xl p-8 md:p-12 shadow-2xl" data-aos="fade-up">
+          <!-- Certificate Header -->
+          <div class="text-center mb-8">
+            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-display rounded-full flex items-center justify-center">
+              <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">СЕРТИФИКАТ</h1>
+            <p class="text-primary/70 text-lg">О прохождении теста</p>
+          </div>
+
+          <!-- Certificate Content -->
+          <div class="text-center mb-8">
+            <p class="text-primary/70 text-lg mb-4">Настоящим удостоверяется, что</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-primary mb-6">{{ user.first_name }} {{ user.last_name }}</h2>
+            <p class="text-primary/70 text-lg mb-6">успешно прошел(а) тест по курсу</p>
+            <h3 class="text-xl md:text-2xl font-semibold text-primary mb-4">{{ course.name }}</h3>
+            <p class="text-primary/70 text-lg mb-6">{{ quiz.title }}</p>
+          </div>
+
+          <!-- Certificate Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-primary/5 rounded-2xl p-6">
+              <h4 class="font-semibold text-primary mb-2">Результат теста</h4>
+              <p class="text-primary/70">{{ attempt.score }} из {{ attempt.answers|length }} правильных ответов</p>
+              <p class="text-primary/70">{{ attempt.percentage|floatformat:1 }}% правильных ответов</p>
+            </div>
+            <div class="bg-primary/5 rounded-2xl p-6">
+              <h4 class="font-semibold text-primary mb-2">Время прохождения</h4>
+              <p class="text-primary/70">{{ attempt.time_taken|floatformat:0 }} секунд</p>
+              <p class="text-primary/70">Завершен: {{ attempt.completed_at|date:"d.m.Y H:i" }}</p>
+            </div>
+          </div>
+
+          <!-- Certificate Number -->
+          <div class="text-center mb-8">
+            <p class="text-primary/70 text-sm mb-2">Номер сертификата</p>
+            <p class="text-primary font-mono text-lg font-semibold">{{ certificate.certificate_number }}</p>
+            <p class="text-primary/50 text-sm mt-2">Выдан: {{ certificate.issued_at|date:"d.m.Y" }}</p>
+          </div>
+
+          <!-- Certificate Footer -->
+          <div class="border-t border-primary/20 pt-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div class="text-center md:text-left">
+                <p class="text-primary/70 text-sm">Подпись администратора</p>
+                <div class="w-32 h-16 border-b-2 border-primary/30 mt-2"></div>
+              </div>
+              <div class="text-center">
+                <p class="text-primary/70 text-sm">Дата выдачи</p>
+                <p class="text-primary font-semibold">{{ certificate.issued_at|date:"d.m.Y" }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-8">
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onclick="printCertificate()" 
+                    class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-8 py-4 text-lg transition-all duration-300">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+              </svg>
+              Печать сертификата
+            </button>
+            
+            <button onclick="downloadCertificate()" 
+                    class="border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-full px-8 py-4 text-lg transition-all duration-300">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Скачать PDF
+            </button>
+            
+            <a href="{% url 'courses:my_courses' %}" 
+               class="text-primary hover:text-primary/70 font-semibold underline">
+              Вернуться к курсам
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .bg-gradient-display {
+      background: linear-gradient(135deg, #F0E263 0%, #C28D31 100%);
+    }
+    
+    .hover-opacity-75:hover {
+      opacity: 0.75;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .certificate-print, .certificate-print * {
+        visibility: visible;
+      }
+      .certificate-print {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+
+  <script>
+    function printCertificate() {
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank');
+      const certificateContent = document.querySelector('.bg-white.text-primary.rounded-3xl');
+      
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Сертификат - {{ course.name }}</title>
+          <style>
+            body { 
+              font-family: Arial, sans-serif; 
+              margin: 0; 
+              padding: 20px; 
+              background: white;
+            }
+            .certificate {
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 40px;
+              border: 3px solid #F0E263;
+              text-align: center;
+            }
+            .header {
+              margin-bottom: 30px;
+            }
+            .header h1 {
+              font-size: 36px;
+              font-weight: bold;
+              color: #333;
+              margin: 10px 0;
+            }
+            .content {
+              margin: 30px 0;
+            }
+            .content h2 {
+              font-size: 28px;
+              font-weight: bold;
+              color: #333;
+              margin: 20px 0;
+            }
+            .content h3 {
+              font-size: 24px;
+              font-weight: 600;
+              color: #333;
+              margin: 15px 0;
+            }
+            .details {
+              display: flex;
+              justify-content: space-around;
+              margin: 30px 0;
+            }
+            .detail-item {
+              background: #f8f9fa;
+              padding: 20px;
+              border-radius: 10px;
+              flex: 1;
+              margin: 0 10px;
+            }
+            .footer {
+              border-top: 2px solid #eee;
+              padding-top: 20px;
+              margin-top: 30px;
+              display: flex;
+              justify-content: space-between;
+            }
+            .certificate-number {
+              font-family: monospace;
+              font-size: 18px;
+              font-weight: bold;
+              color: #333;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="certificate">
+            <div class="header">
+              <h1>СЕРТИФИКАТ</h1>
+              <p>О прохождении теста</p>
+            </div>
+            
+            <div class="content">
+              <p>Настоящим удостоверяется, что</p>
+              <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+              <p>успешно прошел(а) тест по курсу</p>
+              <h3>{{ course.name }}</h3>
+              <p>{{ quiz.title }}</p>
+            </div>
+            
+            <div class="details">
+              <div class="detail-item">
+                <h4>Результат теста</h4>
+                <p>{{ attempt.score }} из {{ attempt.answers|length }} правильных ответов</p>
+                <p>{{ attempt.percentage|floatformat:1 }}% правильных ответов</p>
+              </div>
+              <div class="detail-item">
+                <h4>Время прохождения</h4>
+                <p>{{ attempt.time_taken|floatformat:0 }} секунд</p>
+                <p>Завершен: {{ attempt.completed_at|date:"d.m.Y H:i" }}</p>
+              </div>
+            </div>
+            
+            <div class="certificate-number">
+              <p>Номер сертификата: {{ certificate.certificate_number }}</p>
+              <p>Выдан: {{ certificate.issued_at|date:"d.m.Y" }}</p>
+            </div>
+            
+            <div class="footer">
+              <div>
+                <p>Подпись администратора</p>
+                <div style="width: 150px; height: 50px; border-bottom: 2px solid #333; margin-top: 10px;"></div>
+              </div>
+              <div>
+                <p>Дата выдачи: {{ certificate.issued_at|date:"d.m.Y" }}</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+      
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+    }
+
+    function downloadCertificate() {
+      // For now, just trigger print
+      // In a real implementation, you would generate a PDF
+      printCertificate();
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Документация - Profactive{% endblock %}
+
+{% block content %}
+<main class="container-base">
+    <!-- Hero -->
+    <section class="md:pt-20 mb-12 md:mb-20 lg:mb-31">
+      <div class="">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 lg:gap-11">
+          {% for document in documents %}
+          <a href="{% url 'download_document' document.id %}" download=""
+            class="flex gap-6 items-start lg:items-center bg-white rounded-3xl w-full py-4 md:py-6.25 px-4 md:px-6 hover:shadow-lg transition-shadow duration-300">
+            <div class="w-full flex max-lg:flex-col items-start lg:items-center gap-5">
+              <div
+                class="bg-gradient-banner rounded-full size-15 md:size-20 lg:size-22 flex items-center justify-center p-5 lg:p-6.25">
+                <img class="max-w-7 lg:max-w-9.5" src="{% static 'assets/svgs/file-list.svg' %}" alt="images">
+              </div>
+
+              <div class="flex-1">
+                <p class="md:text-lg lg:text-xl/7.5 font-semibold text-brand-gray-600/90 mb-2">
+                  {{ document.title }}
+                </p>
+                {% if document.description %}
+                <p class="text-sm text-brand-gray-600/70 mb-2">
+                  {{ document.description|truncatewords:15 }}
+                </p>
+                {% endif %}
+                <div class="flex items-center gap-4 text-xs text-brand-gray-600/60">
+                  <span>{{ document.file_type }}</span>
+                  <span>{{ document.get_file_size_display }}</span>
+                  <span>{{ document.download_count }} скачиваний</span>
+                </div>
+              </div>
+            </div>
+            <img src="{% static 'assets/svgs/download.svg' %}" class="ml-auto max-lg:mt-5" alt="images">
+          </a>
+          {% empty %}
+          <div class="col-span-full empty-state-container">
+            <div class="empty-state-content">
+              <div class="empty-state-icon">
+                <svg class="w-16 h-16 md:w-20 md:h-20 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <h3 class="empty-state-title">Документы пока не добавлены</h3>
+              <p class="empty-state-description">
+                Мы работаем над добавлением полезной документации. 
+                Скоро здесь появятся инструкции и руководства.
+              </p>
+              <div class="empty-state-buttons">
+                <a href="{% url 'course-catalogue' %}" class="btn-primary">
+                  Посмотреть курсы
+                </a>
+                <a href="{% url 'contacts' %}" class="btn-secondary">
+                  Связаться с нами
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Уже зарегистрированы в реферальной программе? -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div class="bg-gradient-banner min-h-111 rounded-3xl overflow-hidden">
+        <div class="relative flex max-lg:flex-col lg:items-center justify-between gap-x-7 gap-y-6">
+          <!-- Left -->
+          <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1">
+            <div class="w-full max-w-145">
+              <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
+                Получайте 16% с каждой продажи!
+              </p>
+
+              <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">
+                Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
+              </h2>
+
+              <a href="{% url 'referal' %}" class="bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5 inline-block">
+                Узнать подробнее
+              </a>
+            </div>
+          </div>
+          <!-- Right -->
+          <div class="md:max-w-90.5 relative max-lg:mx-auto lg:mr-10">
+            <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/banner-girl.png' %}" alt="img">
+          </div>
+
+          <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full text-primary">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+          <div class="max-lg:hidden absolute right-0 top-0 z-0 -translate-x-11 translate-y-11">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Часто задаваемые вопросы -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div>
+        <h2 class="text-2xl md:text-3xl lg:text-basic-40 md:text-center mb-5 md:mb-8 lg:mb-11">
+          Часто задаваемые
+          <span class="text-gradient-display">вопросы</span>
+        </h2>
+
+        <!-- Accourdions -->
+        <div class="font-semibold space-y-4 lg:space-y-6">
+          <!-- Где разместить мою ссылку? -->
+          <div x-data="{ open: false }" class="w-full">
+            <button @click="open = !open"
+              class="text-left bg-white w-full flex items-center justify-between border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6">
+              <span class="text-lg/5 lg:text-basic-23/8.5 text-primary">
+                Где разместить мою ссылку?
+              </span>
+
+              <div class="p-2">
+                <svg :class="open ? 'rotate-45' : ''" class="transition-transform duration-300" width="20" height="20"
+                  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z"
+                    fill="#AB803B" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Accourdion Content -->
+            <div x-show="open" :class="open ? '!block' : 'hidden'"
+              class="bg-white hidden border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6 mt-3">
+              <p class="text-primary/50">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum nemo maiores totam at.
+                Similique labore
+                fugit numquam itaque ab sint consequatur? Eveniet, maiores fugiat. Veritatis culpa
+                impedit nemo
+                voluptatibus ut.
+              </p>
+            </div>
+          </div>
+
+          <!-- Сколько можно получить за рекомендацию? -->
+          <div x-data="{ open: false }" class="w-full">
+            <button @click="open = !open"
+              class="text-left bg-white w-full flex items-center justify-between gap-4 border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6">
+              <span class="text-lg/5 lg:text-basic-23/8.5 text-primary">
+                Сколько можно получить за рекомендацию?
+              </span>
+
+              <div class="p-2">
+                <svg :class="open ? 'rotate-45' : ''" class="transition-transform duration-300" width="20" height="20"
+                  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z"
+                    fill="#AB803B" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Accourdion Content -->
+            <div x-show="open" :class="open ? '!block' : 'hidden'"
+              class="bg-white hidden border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6 mt-3">
+              <p class="text-primary/50">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum nemo maiores totam at.
+                Similique labore
+                fugit numquam itaque ab sint consequatur? Eveniet, maiores fugiat. Veritatis culpa
+                impedit nemo
+                voluptatibus ut.
+              </p>
+            </div>
+          </div>
+
+          <!-- Где я могу увидеть статистику? -->
+          <div x-data="{ open: false }" class="w-full">
+            <button @click="open = !open"
+              class="text-left bg-white w-full flex items-center justify-between gap-4 border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6">
+              <span class="text-lg/5 lg:text-basic-23/8.5 text-primary">
+                Где я могу увидеть статистику?
+              </span>
+
+              <div class="p-2">
+                <svg :class="open ? 'rotate-45' : ''" class="transition-transform duration-300" width="20" height="20"
+                  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z"
+                    fill="#AB803B" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Accourdion Content -->
+            <div x-show="open" :class="open ? '!block' : 'hidden'"
+              class="bg-white hidden border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6 mt-3">
+              <p class="text-primary/50">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum nemo maiores totam at.
+                Similique labore
+                fugit numquam itaque ab sint consequatur? Eveniet, maiores fugiat. Veritatis culpa
+                impedit nemo
+                voluptatibus ut.
+              </p>
+            </div>
+          </div>
+
+          <!-- Когда мне придёт бонус за рекомендацию? -->
+          <div x-data="{ open: false }" class="w-full">
+            <button @click="open = !open"
+              class="text-left bg-white w-full flex items-center justify-between gap-4 border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6">
+              <span class="text-lg/5 lg:text-basic-23/8.5 text-primary">
+                Когда мне придёт бонус за рекомендацию?
+              </span>
+
+              <div class="p-2">
+                <svg :class="open ? 'rotate-45' : ''" class="transition-transform duration-300" width="20" height="20"
+                  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z"
+                    fill="#AB803B" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Accourdion Content -->
+            <div x-show="open" :class="open ? '!block' : 'hidden'"
+              class="bg-white hidden border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6 mt-3">
+              <p class="text-primary/50">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum nemo maiores totam at.
+                Similique labore
+                fugit numquam itaque ab sint consequatur? Eveniet, maiores fugiat. Veritatis culpa
+                impedit nemo
+                voluptatibus ut.
+              </p>
+            </div>
+          </div>
+
+          <!-- Что, если мой друг купил курс не по моей ссылке? -->
+          <div x-data="{ open: false }" class="w-full">
+            <button @click="open = !open"
+              class="text-left bg-white w-full flex items-center justify-between gap-4 border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6">
+              <span class="text-lg/5 lg:text-basic-23/8.5 text-primary">
+                Что, если мой друг купил курс не по моей ссылке?
+              </span>
+
+              <div class="p-2">
+                <svg :class="open ? 'rotate-45' : ''" class="transition-transform duration-300" width="20" height="20"
+                  viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z"
+                    fill="#AB803B" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Accourdion Content -->
+            <div x-show="open" :class="open ? '!block' : 'hidden'"
+              class="bg-white hidden border-2 border-brand-gray-700 rounded-[18px] py-3 lg:py-5 px-4 lg:px-6 mt-3">
+              <p class="text-primary/50">
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum nemo maiores totam at.
+                Similique labore
+                fugit numquam itaque ab sint consequatur? Eveniet, maiores fugiat. Veritatis culpa
+                impedit nemo
+                voluptatibus ut.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

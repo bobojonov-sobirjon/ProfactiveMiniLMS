@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Отзывы - Profactive{% endblock %}
+
+{% block content %}
+<main class="min-h-screen">
+  <!-- Reviews Section -->
+  <section class="mb-12 md:mb-20 lg:mb-31 pt-12 md:pt-15 lg:pt-20">
+    <div class="">
+      <div class="mb-5 md:mb-8 lg:mb-11">
+        <p class="text-white/50 lg:text-xl mb-3.5">
+          Получайте 16% с каждой продажи!
+        </p>
+        <h2 class="text-2xl md:text-4xl lg:text-[54px]">
+          Отзывы
+        </h2>
+      </div>
+      <div x-data="showMore(6)">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center mx-auto max-w-200 lg:max-w-300 gap-5 md:gap-8 lg:gap-11 mb-13.5">
+          {% for review in page_obj %}
+          <div class="bg-white lg:max-w-92 rounded-3xl p-4 md:p-6 w-full">
+            <div class="flex items-center gap-3 md:gap-6 mb-6">
+              <img class="max-w-20 lg:max-w-24.5" src="{% static 'assets/images/reviews-img.png' %}" alt="images">
+              <div class="">
+                <h4 class="text-xl lg:text-[22px] mb-1 text-brand-gray-600/90">{{ review.first_name }} {{ review.last_name }}</h4>
+                <div class="flex text-yellow-400">
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                      <span class="text-lg" style="color: #FFD700;">★</span>
+                    {% else %}
+                      <span class="text-lg text-gray-300" style="color: #FFD700;">★</span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <p class="text-brand-gray-600/50 font-medium">{{ review.comment }}</p>
+            <div class="mt-4 pt-4 border-t border-gray-100">
+              <p class="text-sm text-brand-gray-600/70">{{ review.course.name }}</p>
+              <p class="text-xs text-brand-gray-600/50">{{ review.created_at|date:"d.m.Y" }}</p>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-span-full flex justify-center">
+            <div class="text-center py-16">
+              <div class="text-gray-400 mb-4">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-primary mb-2">Пока нет отзывов</h3>
+              <p class="text-primary/70">Станьте первым, кто оставит отзыв о наших курсах!</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        {% if page_obj.has_other_pages %}
+        <div class="mt-8 flex justify-center">
+          <nav class="flex items-center space-x-2">
+            {% if page_obj.has_previous %}
+              <a href="?page=1" class="px-3 py-2 text-sm font-medium text-white border border-white rounded-l-md hover:border-brand-yellow-500 hover:text-brand-yellow-500">
+                Первая
+              </a>
+              <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 text-sm font-medium text-white border border-white hover:border-brand-yellow-500 hover:text-brand-yellow-500">
+                Предыдущая
+              </a>
+            {% endif %}
+
+            <span class="px-3 py-2 text-sm font-medium text-white border border-brand-yellow-500 bg-brand-yellow-500">
+              {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 text-sm font-medium text-white border border-white hover:border-brand-yellow-500 hover:text-brand-yellow-500">
+                Следующая
+              </a>
+              <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-2 text-sm font-medium text-white border border-white rounded-r-md hover:border-brand-yellow-500 hover:text-brand-yellow-500">
+                Последняя
+              </a>
+            {% endif %}
+          </nav>
+        </div>
+        {% endif %}
+        
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock %}

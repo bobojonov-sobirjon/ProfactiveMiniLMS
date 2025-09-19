@@ -1,0 +1,27 @@
+/* Course Materials Admin Styles */
+.field-video_file,
+.field-audio_file,
+.field-document_file,
+.field-video_time {
+    transition: all 0.3s ease;
+}
+
+.field-video_file.hidden,
+.field-audio_file.hidden,
+.field-document_file.hidden,
+.field-video_time.hidden {
+    display: none !important;
+}
+
+.material-type-select {
+    font-weight: bold;
+}
+
+/* Highlight active fields */
+.field-video_file:not(.hidden),
+.field-audio_file:not(.hidden),
+.field-document_file:not(.hidden) {
+    background-color: #f8f9fa;
+    border-left: 3px solid #007cba;
+    padding-left: 10px;
+}

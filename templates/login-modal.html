@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет</title>
+  <link rel="stylesheet" href="./css/output.css">
+  <!-- Link Swiper's CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <!-- <script defer src="https://api-maps.yandex.ru/2.1/?lang=en"></script> -->
+</head>
+
+<body>
+  <!-- Header -->
+  <header x-data="{ open: false }"
+    x-init="$watch('open', value => document.body.classList.toggle('overflow-hidden', value))" class="py-6">
+    <nav class="container-base flex items-center justify-between gap-5">
+      <!-- Logo -->
+      <a href="./index.html">
+        <img class="h-16 md:h-20 lg:h-26" src="./assets/svgs/logo.svg" alt="Logo">
+      </a>
+
+      <!-- Links -->
+      <div class="hidden items-center gap-9.5">
+        <div class="relative group">
+          <a class="flex items-center gap-3.5 transition duration-200 hover:text-brand-yellow-500"
+            href="./course-catalogue.html">
+            <span class="text-lg">
+              Каталог курсов
+            </span>
+            <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M6.99999 5.17192L11.95 0.221924L13.364 1.63592L6.99999 7.99992L0.635986 1.63592L2.04999 0.221924L6.99999 5.17192Z"
+                fill="url(#paint0_linear_4001_5)" />
+              <defs>
+                <linearGradient id="paint0_linear_4001_5" x1="10.512" y1="1.1797" x2="5.01273" y2="7.04877"
+                  gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#AB803B" />
+                  <stop offset="0.235294" stop-color="#CDB14F" />
+                  <stop offset="0.490196" stop-color="#F0E263" />
+                  <stop offset="0.733333" stop-color="#D9B84A" />
+                  <stop offset="1" stop-color="#C28D31" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </a>
+
+          <div class="absolute z-10 hidden group-hover:block bg-white w-55 rounded-lg p-3 space-y-1.5">
+            <a class="block text-primary hover-opacity-75" href="./course-catalogue.html">
+              Каталог курсов
+            </a>
+            <a class="block text-primary hover-opacity-75" href="./materials.html">
+              Материалы
+            </a>
+            <a class="block text-primary hover-opacity-75" href="./popular.html">
+              Популярные курсы
+            </a>
+          </div>
+        </div>
+
+        <a href="./reviews.html" class="transition duration-200 hover:text-brand-yellow-500 ">
+          Отзывы
+        </a>
+        <a href="#" class="transition duration-200 hover:text-brand-yellow-500 ">
+          Блог
+        </a>
+        <a href="./referal.html" class="transition duration-200 hover:text-brand-yellow-500 ">
+          Предложения
+        </a>
+        <a href="./services.html" class="transition duration-200 hover:text-brand-yellow-500 ">
+          Услуги
+        </a>
+        <a href="./about.html" class="transition duration-200 hover:text-brand-yellow-500 ">
+          О нас
+        </a>
+        <a href="./contacts.html" class="transition duration-200 hover:text-brand-yellow-500 ">
+          Контакты
+        </a>
+      </div>
+
+      <!-- Login & Mobile Menu -->
+      <div class="flex items-center gap-6 font-semibold">
+                <a href="./my-courses.html"
+          class="max-lg:hidden font-semibold border-gradient px-5 lg:px-8.5 py-2 lg:py-3.25 rounded-full">
+          Мои курсы
+        </a>
+
+        <a href="./course-catalogue.html"
+          class="max-lg:hidden bg-gradient-display hover-opacity-75 text-primary rounded-full px-5 lg:px-8.5 py-2 lg:py-3.25">
+          Программа курса
+        </a>
+
+
+        <div class="ml-9">
+          <div class=" flex items-center gap-3 cursor-pointer">
+            <div class="size-11 lg:size-15 overflow-hidden rounded-full">
+              <img class="size-full object-cover object-top" src="./assets/images/user-img.jpg" alt="img">
+            </div>
+
+            <p class="max-lg:hidden">
+              Наталья
+            </p>
+
+            <svg class="shrink-0" width="10" height="8" viewBox="0 0 10 8" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M4.99997 7.49998L0.0498047 2.54981L1.70064 0.900146L4.99997 4.20065L8.2993 0.900146L9.95014 2.54981L4.99997 7.49998Z"
+                fill="url(#paint0_linear_2070_127)" />
+              <defs>
+                <linearGradient id="paint0_linear_2070_127" x1="7.73173" y1="1.71285" x2="3.05672" y2="6.28661"
+                  gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#AB803B" />
+                  <stop offset="0.235294" stop-color="#CDB14F" />
+                  <stop offset="0.490196" stop-color="#F0E263" />
+                  <stop offset="0.733333" stop-color="#D9B84A" />
+                  <stop offset="1" stop-color="#C28D31" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+        <!-- Mobile Menu -->
+        <button @click="open = true" class="transition duration-200 hover:text-brand-yellow-500">
+          <svg width="20" height="20" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M0.25 0.666626H25.75V3.49996H0.25V0.666626ZM0.25 10.5833H25.75V13.4166H0.25V10.5833ZM0.25 20.5H25.75V23.3333H0.25V20.5Z"
+              fill="currentColor" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Overlay + Mobile Menu -->
+    <div x-show="open" class="fixed inset-0 z-40" x-transition.opacity>
+      <!-- Overlay -->
+      <div class="absolute inset-0 bg-primary/50" @click="open = false">
+      </div>
+
+      <!-- Slide Menu -->
+      <div
+        class="absolute top-0 left-0 w-64 h-full bg-primary shadow-lg p-6 pt-10 transform transition-transform duration-700 ease-in-out"
+        :class="open ? 'translate-x-0' : '-translate-x-full'" @click.stop>
+        <!-- Close Button -->
+        <button @click="open = false" class="mb-14 text-white transition duration-200 hover:text-brand-yellow-500 block w-fit ml-auto">
+          <svg width="20" height="20" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M0.25 0.666626H25.75V3.49996H0.25V0.666626ZM0.25 10.5833H25.75V13.4166H0.25V10.5833ZM0.25 20.5H25.75V23.3333H0.25V20.5Z"
+              fill="currentColor" />
+          </svg>
+        </button>
+
+        <!-- Links -->
+        <div class="flex flex-col gap-3 text-white !text-lg mb-7">
+          <div class="relative group">
+            <a class="text-white flex items-center gap-3.5 transition duration-200 hover:text-brand-yellow-500"
+              href="./course-catalogue.html">
+              <span>
+                Каталог курсов
+              </span>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M6.99999 5.17192L11.95 0.221924L13.364 1.63592L6.99999 7.99992L0.635986 1.63592L2.04999 0.221924L6.99999 5.17192Z"
+                  fill="url(#paint0_linear_4001_5)" />
+                <defs>
+                  <linearGradient id="paint0_linear_4001_5" x1="10.512" y1="1.1797" x2="5.01273" y2="7.04877"
+                    gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#AB803B" />
+                    <stop offset="0.235294" stop-color="#CDB14F" />
+                    <stop offset="0.490196" stop-color="#F0E263" />
+                    <stop offset="0.733333" stop-color="#D9B84A" />
+                    <stop offset="1" stop-color="#C28D31" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </a>
+
+            <div class="absolute z-10 hidden bg-white rounded-lg w-full p-3 space-y-1.5">
+              <a class="block text-primary hover-opacity-75" href="#">
+                Link 1
+              </a>
+              <a class="block text-primary hover-opacity-75" href="#">
+                Link 1
+              </a>
+              <a class="block text-primary hover-opacity-75" href="#">
+                Link 1
+              </a>
+            </div>
+          </div>
+
+          <a href="./reviews.html" class="text-white transition duration-200 hover:text-brand-yellow-500">
+            Отзывы
+          </a>
+          <a href="#" class="text-white transition duration-200 hover:text-brand-yellow-500">
+            Блог
+          </a>
+          <a href="./referal.html" class="text-white transition duration-200 hover:text-brand-yellow-500">
+            Предложения
+          </a>
+          <a href="./services.html" class="text-white transition duration-200 hover:text-brand-yellow-500">
+            Услуги
+          </a>
+          <a href="./about.html" class="text-white transition duration-200 hover:text-brand-yellow-500">
+            О нас
+          </a>
+          <a href="./contacts.html" class="text-white transition duration-200 hover:text-brand-yellow-500">
+            Контакты
+          </a>
+        </div>
+
+        <div class="flex lg:hidden flex-col text-center gap-3">
+          <a href="./my-courses.html"
+            class="font-semibold border-gradient px-5 lg:px-8.5 py-2 lg:py-3.25">
+            Мои курсы
+          </a>
+
+          <a href="./course-catalogue.html"
+            class="bg-gradient-display hover-opacity-75 text-primary rounded-full px-5 lg:px-8.5 py-2 lg:py-3.25">
+            Программа курса
+          </a>
+
+
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Ref Modal -->
+    <section>
+      <!-- Overlay -->
+      <div class="fixed z-20 left-0 right-0 bg-primary/50 size-full" @click="open = false">
+      </div>
+
+      <!-- Modal -->
+      <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-30 max-w-156 w-full px-5 py-7">
+        <div class="max-w-136 w-full bg-white rounded-3xl overflow-hidden p-5 md:p-8 lg:p-11 mx-auto">
+          <h2
+            class="font-bold text-primary text-center text-basic-23 md:text-3xl lg:text-basic-40/13.5 mb-5 md:mb-8 lg:mb-11">
+            Оставить заявку
+          </h2>
+
+          <form class="text-center" action="#">
+            <input type="email" name="email" id="email"
+              class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary mb-3.5 lg:mb-6"
+              placeholder="Email">
+            <input type="tex" name="parol" id="parol"
+              class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary mb-5 md:mb-8 lg:mb-11"
+              placeholder="Пароль">
+
+            <button
+              class="block w-full font-semibold bg-gradient-display hover-opacity-75 text-primary lg:text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5 mb-3.5 lg:mb-4">
+              Получить доступ
+            </button>
+
+            <a href="./get-access.html"
+              class="font-medium underline underline-offset-4 text-primary/50 hover-opacity-75">
+              Восстановить пароль
+            </a>
+          </form>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Уже зарегистрированы в реферальной программе? -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div class="bg-gradient-banner min-h-111 rounded-3xl overflow-hidden">
+        <div class="relative flex max-lg:flex-col lg:items-center justify-between gap-x-7 gap-y-6">
+          <!-- Left -->
+          <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1">
+            <div class="w-full lg:max-w-145">
+              <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
+                Получайте 16% с каждой продажи!
+              </p>
+
+              <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">
+                Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
+              </h2>
+
+              <button class="bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
+                Узнать подробнее
+              </button>
+            </div>
+          </div>
+          <!-- Right -->
+          <div class="md:max-w-90.5 relative max-lg:mx-auto lg:mr-10">
+            <img class="relative z-0 size-full object-cover" src="./assets/images/banner-girl.png" alt="img">
+          </div>
+
+          <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full text-primary">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+          <div class="max-lg:hidden absolute right-0 top-0 z-0 -translate-x-11 translate-y-11">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- Alpine.js -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="./js/app.js"></script>
+</body>
+
+</html>

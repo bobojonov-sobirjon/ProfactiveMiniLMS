@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load quiz_extras %}
+
+{% block title %}Результаты теста - {{ course.name }}{% endblock %}
+
+{% block content %}
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Results Header -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div class="text-center mb-8 md:mb-12">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+          Результаты теста
+        </h1>
+        <p class="text-white/70 text-lg">
+          {{ course.name }} - {{ quiz.title }}
+        </p>
+      </div>
+
+      <!-- Results Card -->
+      <div class="bg-white text-primary rounded-3xl p-8 mb-8" data-aos="fade-up">
+        <div class="text-center">
+          {% if attempt.is_passed %}
+            <div class="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
+              <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-green-600 mb-4">Поздравляем!</h2>
+            <p class="text-primary/70 text-lg mb-6">Вы успешно прошли тест</p>
+          {% else %}
+            <div class="w-24 h-24 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
+              <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-red-600 mb-4">Тест не пройден</h2>
+            <p class="text-primary/70 text-lg mb-6">Попробуйте еще раз</p>
+          {% endif %}
+
+          <!-- Score Display -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-primary/5 rounded-2xl p-6">
+              <div class="text-4xl font-bold text-primary mb-2">{{ attempt.score }}</div>
+              <div class="text-primary/70">Правильных ответов</div>
+            </div>
+            <div class="bg-primary/5 rounded-2xl p-6">
+              <div class="text-4xl font-bold text-primary mb-2">{{ attempt.percentage|floatformat:1 }}%</div>
+              <div class="text-primary/70">Процент правильных</div>
+            </div>
+            <div class="bg-primary/5 rounded-2xl p-6">
+              <div class="text-4xl font-bold text-primary mb-2">{{ attempt.time_taken|floatformat:0 }}</div>
+              <div class="text-primary/70">Секунд</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-primary font-medium">Ваш результат</span>
+              <span class="text-primary font-medium">{{ attempt.percentage|floatformat:1 }}%</span>
+            </div>
+            <div class="w-full bg-primary/20 rounded-full h-4">
+              <div class="h-4 rounded-full {% if attempt.is_passed %}bg-green-500{% else %}bg-red-500{% endif %}" 
+                   style="width: {{ attempt.percentage }}%"></div>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+              <span class="text-primary/50 text-sm">0%</span>
+              <span class="text-primary/50 text-sm">Проходной балл: {{ quiz.passing_score }}%</span>
+              <span class="text-primary/50 text-sm">100%</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            {% if attempt.is_passed and certificate %}
+              <a href="{% url 'courses:quiz_certificate' course.id %}" 
+                 class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-8 py-4 text-lg transition-all duration-300">
+                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Скачать сертификат
+              </a>
+            {% endif %}
+            
+            <a href="{% url 'courses:my_courses' %}" 
+               class="border-2 border-primary text-primary hover:bg-primary hover:text-primary/70 font-semibold rounded-full px-8 py-4 text-lg transition-all duration-300">
+              Мои курсы
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Results -->
+    <section class="mb-8">
+      <h3 class="text-2xl font-bold text-white mb-6">Детальные результаты</h3>
+      
+      <div class="space-y-4">
+        {% for question in questions %}
+          <div class="bg-white text-primary rounded-2xl p-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+            <div class="flex items-start gap-4">
+              <div class="flex-shrink-0">
+                <span class="bg-gradient-display text-primary font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm">
+                  {{ forloop.counter }}
+                </span>
+              </div>
+              
+              <div class="flex-1">
+                <h4 class="font-semibold text-primary mb-4">{{ question.question_text }}</h4>
+                
+                <div class="space-y-2">
+                  <div class="flex items-center p-3 rounded-lg {% if 'A' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'A' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                    <span class="font-medium mr-3">A.</span>
+                    <span class="flex-1">{{ question.option_a }}</span>
+                    {% if 'A' == question.correct_answer %}
+                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% elif 'A' == attempt.answers|get_item:question.id %}
+                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="flex items-center p-3 rounded-lg {% if 'B' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'B' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                    <span class="font-medium mr-3">B.</span>
+                    <span class="flex-1">{{ question.option_b }}</span>
+                    {% if 'B' == question.correct_answer %}
+                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% elif 'B' == attempt.answers|get_item:question.id %}
+                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="flex items-center p-3 rounded-lg {% if 'C' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'C' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                    <span class="font-medium mr-3">C.</span>
+                    <span class="flex-1">{{ question.option_c }}</span>
+                    {% if 'C' == question.correct_answer %}
+                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% elif 'C' == attempt.answers|get_item:question.id %}
+                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="flex items-center p-3 rounded-lg {% if 'D' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'D' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                    <span class="font-medium mr-3">D.</span>
+                    <span class="flex-1">{{ question.option_d }}</span>
+                    {% if 'D' == question.correct_answer %}
+                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% elif 'D' == attempt.answers|get_item:question.id %}
+                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                {% if question.explanation %}
+                  <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h5 class="font-semibold text-blue-800 mb-2">Объяснение:</h5>
+                    <p class="text-blue-700">{{ question.explanation }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .bg-gradient-display {
+      background: linear-gradient(135deg, #F0E263 0%, #C28D31 100%);
+    }
+    
+    .hover-opacity-75:hover {
+      opacity: 0.75;
+    }
+  </style>
+{% endblock %}

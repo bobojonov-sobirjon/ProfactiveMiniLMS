@@ -1,0 +1,816 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.name }} - Детали курса{% endblock %}
+
+{% block content %}
+  <!-- CSRF Token -->
+  {% csrf_token %}
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Мои курсы -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div>
+        <div class="w-full mb-5 md:mb-8 lg:mb-11" data-aos="fade-down" data-aos-delay="100">
+          <div class="flex items-center gap-4 mb-3.5">
+            <p class="font-medium md:text-lg lg:text-xl text-white/50">
+              {{ course.category.name }}
+            </p>
+            <h2 class="text-2xl md:text-basic-40 lg:text-[54px]">
+              {{ course.name }}
+            </h2>
+          </div>
+        </div>
+
+        <!-- Course Statistics -->
+        <div class="flex flex-wrap gap-4 mb-6 md:mb-8 lg:mb-11" data-aos="fade-up" data-aos-delay="200">
+          <div class="flex items-center gap-2 text-white/70">
+            <span class="w-2 h-2 bg-gradient-display rounded-full"></span>
+            <span class="font-medium">{{ total_lessons }} уроков</span>
+          </div>
+          <div class="flex items-center gap-2 text-white/70">
+            <span class="w-2 h-2 bg-gradient-display rounded-full"></span>
+            <span class="font-medium">Продолжительность курса - {{ total_duration_hours }} часов{% if total_duration_minutes > 0 %} {{ total_duration_minutes }} минут{% endif %}</span>
+          </div>
+        </div>
+
+        <div class="flex max-md:flex-col justify-between gap-4 lg:gap-6 mb-5 md:mb-8 lg:mb-11" data-aos="fade-right" data-aos-delay="300">
+          <!-- Left -->
+          <div class="max-w-198 w-full space-y-5 md:space-y-8 lg:space-y-11 flex-1">
+            <div class="aspect-square lg:aspect-[792/544] rounded-3xl overflow-hidden">
+              {% if course.image %}
+                <img class="size-full object-cover" src="{{ course.image.url }}" alt="{{ course.name }}">
+              {% else %}
+                <img class="size-full object-cover" src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Right -->
+          <div class="md:max-w-91 w-full flex-1" data-aos="fade-left" data-aos-delay="400">
+            <!-- Course Content -->
+            <div class="bg-white text-primary rounded-3xl p-4 lg:p-6">
+              <div class="border-b border-primary/20 mb-4 lg:mb-6 pb-2 lg:pb-3.5">
+                <h4 class="max-md:text-center font-semibold text-lg lg:text-basic-23">
+                  Содержание курса
+                </h4>
+              </div>
+              <div class="space-y-2 md:space-y-3.5 text-primary/50">
+                {% if chapters_with_content %}
+                  {% for chapter_data in chapters_with_content %}
+                    <div class="mb-4">
+                      <div class="flex items-center justify-between">
+                        <h5 class="font-semibold text-primary">{{ chapter_data.chapter.title }}</h5>
+                        <div class="text-xs text-primary/50">
+                          {% if chapter_data.total_duration_hours > 0 %}
+                            {{ chapter_data.total_duration_hours }}ч {{ chapter_data.total_duration_minutes }}м
+                          {% elif chapter_data.total_duration_minutes > 0 %}
+                            {{ chapter_data.total_duration_minutes }}м
+                          {% else %}
+                            0 м
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <p class="font-medium text-primary/30">
+                    Материалы курса пока не добавлены
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Chapters with Expandable Content -->
+        <div class="mb-8 md:mb-12 lg:mb-16" data-aos="fade-up" data-aos-delay="500">
+          <h3 class="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-6 md:mb-8">
+            Содержание курса
+          </h3>
+          
+          <div class="space-y-4">
+            {% for chapter_data in chapters_with_content %}
+              <div x-data="{ open: false }" class="bg-white/5 border-2 border-white/30 rounded-2xl overflow-hidden" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:500 }}">
+                <!-- Chapter Header -->
+                {% if chapter_data.chapter.is_activate %}
+                  <button @click="open = !open" 
+                    class="w-full flex items-center justify-between p-4 lg:p-6 hover:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-4">
+                      <span class="text-white/50 font-medium text-sm">{{ forloop.counter|stringformat:"02d" }}</span>
+                      <h4 class="text-white font-semibold text-lg lg:text-xl">{{ chapter_data.chapter.title }}</h4>
+                    </div>
+                    <div class="p-2">
+                      <svg :class="open ? 'rotate-45' : ''" class="transition-all duration-500 ease-in-out text-white/70" width="20" height="20"
+                        viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z" fill="currentColor" />
+                      </svg>
+                    </div>
+                  </button>
+                {% else %}
+                  <button @click="alert('Нет доступа')" 
+                    class="w-full flex items-center justify-between p-4 lg:p-6 opacity-50 hover:opacity-70 transition-opacity">
+                    <div class="flex items-center gap-4">
+                      <span class="text-white/50 font-medium text-sm">{{ forloop.counter|stringformat:"02d" }}</span>
+                      <h4 class="text-white font-semibold text-lg lg:text-xl">{{ chapter_data.chapter.title }}</h4>
+                    </div>
+                    <div class="p-2">
+                      <svg class="text-white/30" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z" fill="currentColor" />
+                      </svg>
+                    </div>
+                  </button>
+                {% endif %}
+
+          <!-- Chapter Content -->
+          {% if chapter_data.chapter.is_activate %}
+            <div x-show="open" 
+                 x-transition:enter="transition-all duration-500 ease-out"
+                 x-transition:enter-start="opacity-0 max-h-0"
+                 x-transition:enter-end="opacity-100 max-h-screen"
+                 x-transition:leave="transition-all duration-500 ease-in"
+                 x-transition:leave-start="opacity-100 max-h-screen"
+                 x-transition:leave-end="opacity-0 max-h-0"
+                 class="border-t-2 border-white/20 p-4 lg:p-6 overflow-hidden">
+                  <div class="space-y-4">
+                    <!-- Videos Section -->
+                    {% if chapter_data.videos %}
+                      <div class="space-y-4">
+                        <h5 class="text-white/70 font-medium mb-3">Видео</h5>
+                        <div class="space-y-2">
+                          {% for video in chapter_data.videos %}
+                            <div class="p-3 bg-white/5 border border-white/10 rounded-lg transition-all duration-300 hover:bg-white/10">
+                              <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-10 bg-gradient-display rounded-full flex items-center justify-center flex-shrink-0">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 5V19L19 12L8 5Z" fill="white"/>
+                                  </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                  <p class="text-white font-medium break-words">{{ video.title }}</p>
+                                  {% if video.description %}
+                                    <p class="text-white/50 text-sm break-words mt-1">{{ video.description|truncatewords:15 }}</p>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              <div class="flex items-center justify-between">
+                                <span class="text-white/50 text-sm">{{ video.video_time }}</span>
+                                {% if video.is_free %}
+                                  <button onclick="openVideoModal('{{ video.get_file_url }}', '{{ video.title|escapejs }}')" class="text-blue-400 hover:text-blue-300 text-sm font-medium underline whitespace-nowrap">
+                                    Смотреть
+                                  </button>
+                                {% else %}
+                                  <div class="flex items-center gap-1 text-yellow-400">
+                                    <span class="text-sm">Нет доступа</span>
+                                  </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    <!-- Materials Section -->
+                    {% if chapter_data.materials %}
+                      <div class="space-y-4">
+                        <h5 class="text-white/70 font-medium mb-3">Материалы</h5>
+                        <div class="space-y-2">
+                          {% for material in chapter_data.materials %}
+                            <div class="p-3 bg-white/5 border border-white/10 rounded-lg transition-all duration-300 hover:bg-white/10">
+                              <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-gradient-display rounded-full flex items-center justify-center flex-shrink-0">
+                                  {% if material.material_type == 'image' %}
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M21 19V5C21 3.9 20.1 3 19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19ZM8.5 13.5L11 16.51L14.5 12L19 18H5L8.5 13.5Z" fill="white"/>
+                                    </svg>
+                                  {% else %}
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="white"/>
+                                    </svg>
+                                  {% endif %}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                  <p class="text-white font-medium break-words">{{ material.title }}</p>
+                                  {% if material.description %}
+                                    <p class="text-white/50 text-sm break-words mt-1">{{ material.description|truncatewords:15 }}</p>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              <div class="flex items-center justify-between">
+                                <span class="text-white/50 text-sm">
+                                  {% if material.material_type == 'document' %}Документ{% else %}Изображение{% endif %}
+                                </span>
+                                <div class="flex items-center gap-2">
+                                  {% if material.is_free %}
+                                    <a href="{{ material.get_file_url }}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm font-medium underline whitespace-nowrap">
+                                      Скачать
+                                    </a>
+                                  {% else %}
+                                    <div class="flex items-center gap-1 text-yellow-400">
+                                      <span class="text-sm">Нет доступа</span>
+                                    </div>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    {% if not chapter_data.videos and not chapter_data.materials %}
+                      <p class="text-white/50 text-center py-4">В этом разделе пока нет материалов</p>
+                    {% endif %}
+                  </div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if not chapters_with_content %}
+              <div class="text-center py-8">
+                <p class="text-white/50 text-lg">Содержание курса пока не готово</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <p class="text-white/50 font-medium">
+          {{ course.description }}
+        </p>
+        
+        {% if user.is_authenticated %}
+          {% if is_enrolled %}
+            <a href="{% url 'courses:my_courses' %}"
+              class="font-medium text-white/50 underline-offset-2 underline hover-opacity-75 block mb-6 md:mb-9 lg:mb-13.5">
+              Перейти к моим курсам
+            </a>
+          {% else %}
+            <a href="#" onclick="openAccessModal(); return false;"
+              class="font-medium text-white/50 underline-offset-2 underline hover-opacity-75 block mb-6 md:mb-9 lg:mb-13.5">
+              Получить доступ к курсу
+            </a>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'login' %}"
+            class="font-medium text-white/50 underline-offset-2 underline hover-opacity-75 block mb-6 md:mb-9 lg:mb-13.5">
+            Войти в систему для доступа к курсу
+          </a>
+        {% endif %}
+
+
+
+        <div class="whitespace-nowrap flex max-sm:flex-col sm:items-center gap-3 lg:gap-6" data-aos="fade-up" data-aos-delay="600">
+          <a href="{% url 'course-catalogue' %}"
+            class="w-fit bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
+            Все курсы
+          </a>
+          {% if user.is_authenticated %}
+            {% if is_enrolled %}
+              <a href="{% url 'courses:my_courses' %}"
+                class="w-fit font-semibold border-gradient-rounded-14 rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
+                Мои курсы
+              </a>
+            {% else %}
+              <button onclick="openAccessModal()"
+                class="w-fit font-semibold border-gradient-rounded-14 rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
+                Получить доступ
+              </button>
+            {% endif %}
+          {% else %}
+            <button onclick="openPurchaseModal()"
+              class="w-fit font-semibold border-gradient-rounded-14 rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
+              Купить курс
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+    <!-- Уже зарегистрированы в реферальной программе? -->
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div class="bg-gradient-banner min-h-111 rounded-3xl overflow-hidden">
+        <div class="relative flex max-lg:flex-col lg:items-center justify-between gap-x-7 gap-y-6">
+          <!-- Left -->
+          <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1">
+            <div class="w-full lg:max-w-145">
+              <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
+                Получайте 16% с каждой продажи!
+              </p>
+
+              <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">
+                Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
+              </h2>
+
+              <button class="bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
+                Узнать подробнее
+              </button>
+            </div>
+          </div>
+          <!-- Right -->
+          <div class="md:max-w-90.5 relative max-lg:mx-auto lg:mr-10">
+            <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/banner-girl.png' %}" alt="img">
+          </div>
+
+          <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full text-primary">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+          <div class="max-lg:hidden absolute right-0 top-0 z-0 -translate-x-11 translate-y-11">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
+                fill="#1E1E1E" fill-opacity="0.882353" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Reviews Section -->
+  <section class="py-10 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <!-- Add Review Form -->
+        <div class="max-w-136 w-full bg-white rounded-3xl overflow-hidden p-4 md:p-6 lg:p-8 mx-auto">
+          <h3 class="font-bold text-primary text-center text-basic-23 md:text-3xl lg:text-basic-40/13.5 mb-4 md:mb-6 lg:mb-8">
+            Оставить отзыв
+          </h3>
+          
+          <form id="reviewForm" class="text-center">
+            {% csrf_token %}
+            
+            <input type="text" id="review_first_name" name="first_name" required
+              class="w-full border border-primary/20 rounded-[14px] px-6 py-4 text-primary font-normal placeholder:text-primary/20 outline-none focus:border-primary mb-6"
+              placeholder="Имя">
+              
+            <input type="text" id="review_last_name" name="last_name" required
+              class="w-full border border-primary/20 rounded-[14px] px-6 py-4 text-primary font-normal placeholder:text-primary/20 outline-none focus:border-primary mb-6"
+              placeholder="Фамилия">
+            
+            <!-- Rating Section -->
+            <div class="mb-6">
+              <div class="text-center mb-4">
+                <p class="text-primary font-medium mb-3">Рейтинг *</p>
+                <div class="flex items-center justify-center">
+                  <div class="flex space-x-6 md:space-x-4" style="gap: 10px;" id="rating-stars">
+                    <button type="button" style="padding: 5px;" class="star-btn w-14 h-14 border-2 border-primary/30 rounded-full flex items-center justify-center text-primary font-bold text-3xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110" data-rating="1">★</button>
+                    <button type="button" style="padding: 5px;" class="star-btn w-14 h-14 border-2 border-primary/30 rounded-full flex items-center justify-center text-primary font-bold text-3xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110" data-rating="2">★</button>
+                    <button type="button" style="padding: 5px;" class="star-btn w-14 h-14 border-2 border-primary/30 rounded-full flex items-center justify-center text-primary font-bold text-3xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110" data-rating="3">★</button>
+                    <button type="button" style="padding: 5px;" class="star-btn w-14 h-14 border-2 border-primary/30 rounded-full flex items-center justify-center text-primary font-bold text-3xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110" data-rating="4">★</button>
+                    <button type="button" style="padding: 5px;" class="star-btn w-14 h-14 border-2 border-primary/30 rounded-full flex items-center justify-center text-primary font-bold text-3xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer transform hover:scale-110" data-rating="5">★</button>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="review_rating" name="rating" required>
+            </div>
+            
+            <textarea id="review_comment" name="comment" rows="4" required
+              class="w-full border border-primary/20 rounded-[14px] px-6 py-4 text-primary font-normal placeholder:text-primary/20 outline-none focus:border-primary mb-6 resize-none"
+              placeholder="Поделитесь своим мнением о курсе..."></textarea>
+            
+            <button type="submit"
+              class="block w-full font-semibold bg-gradient-display hover-opacity-75 text-primary lg:text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-4 mb-3">
+              Отправить отзыв
+            </button>
+          </form>
+        </div>
+        
+        <!-- View All Reviews Link -->
+        <div class="text-center mt-8">
+          <a href="{% url 'courses:reviews' %}" 
+            class="font-medium underline underline-offset-4 text-primary/50 hover:opacity-75">
+            Посмотреть все отзывы
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Modal -->
+  <div id="videoModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75" style="display: none;">
+    <!-- Modal Content -->
+    <div class="relative w-full max-w-4xl mx-4 bg-black rounded-lg overflow-hidden shadow-2xl">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <h3 id="videoTitle" class="text-lg font-semibold truncate pr-2"></h3>
+        <button onclick="closeVideoModal()" class="text-gray-200 hover:text-white transition-colors flex-shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Video Player -->
+      <div class="relative bg-black">
+        <video 
+          id="videoPlayer"
+          controls 
+          class="w-full h-auto max-h-[70vh]"
+          preload="metadata">
+          Ваш браузер не поддерживает видео элемент.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- Access Modal -->
+  <div id="accessModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+    <div class="relative w-full max-w-156 mx-4">
+      <div class="bg-white rounded-3xl overflow-hidden p-5 md:p-8 lg:p-11">
+        <h2 class="font-bold text-primary text-center text-basic-23 md:text-3xl lg:text-basic-40/13.5 mb-5 md:mb-8 lg:mb-11">
+          Получить доступ
+        </h2>
+
+        <form id="accessForm" class="space-y-4 md:space-y-6">
+          {% csrf_token %}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <label for="access_first_name" class="block text-primary/70 font-medium mb-2">Имя *</label>
+              <input type="text" id="access_first_name" name="first_name" required
+                placeholder="Введите ваше имя"
+                class="w-full border border-primary/20 rounded-[14px] px-4 py-3 text-primary bg-white placeholder:text-primary/50 outline-none focus:border-primary">
+            </div>
+            <div>
+              <label for="access_last_name" class="block text-primary/70 font-medium mb-2">Фамилия *</label>
+              <input type="text" id="access_last_name" name="last_name" required
+                placeholder="Введите вашу фамилию"
+                class="w-full border border-primary/20 rounded-[14px] px-4 py-3 text-primary bg-white placeholder:text-primary/50 outline-none focus:border-primary">
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <label for="access_email" class="block text-primary/70 font-medium mb-2">Email *</label>
+              <input type="email" id="access_email" name="email" required
+                placeholder="example@email.com"
+                class="w-full border border-primary/20 rounded-[14px] px-4 py-3 text-primary bg-white placeholder:text-primary/50 outline-none focus:border-primary">
+            </div>
+            <div>
+              <label for="access_phone" class="block text-primary/70 font-medium mb-2">Номер телефона *</label>
+              <input type="tel" id="access_phone" name="phone_number" required
+                placeholder="+998 90 123 45 67"
+                class="w-full border border-primary/20 rounded-[14px] px-4 py-3 text-primary bg-white placeholder:text-primary/50 outline-none focus:border-primary">
+            </div>
+          </div>
+          
+          <div>
+            <label for="access_promo_code" class="block text-primary/70 font-medium mb-2">Промокод (необязательно)</label>
+            <input type="text" id="access_promo_code" name="promo_code"
+              placeholder="Введите промокод для скидки"
+              class="w-full border border-primary/20 rounded-[14px] px-4 py-3 text-primary bg-white placeholder:text-primary/50 outline-none focus:border-primary">
+          </div>
+
+        <div class="text-center">
+            <button type="submit" 
+              class="bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-8 py-3 lg:py-4 text-lg">
+              Получить доступ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Purchase Modal -->
+  <div id="purchaseModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+    <div class="relative w-full max-w-156 mx-4">
+      <div class="bg-white rounded-3xl overflow-hidden p-5 md:p-8 lg:p-11">
+        <h2 class="font-bold text-primary text-center text-basic-23 md:text-3xl lg:text-basic-40/13.5 mb-5 md:mb-8 lg:mb-11">
+          Купить курс
+        </h2>
+
+        <form id="purchaseForm" class="text-center">
+          {% csrf_token %}
+          
+          <!-- Имя и Фамилия в одну строку -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 md:mb-8 lg:mb-11">
+            <div class="text-left">
+              <label for="purchase_first_name" class="block text-primary/70 font-medium mb-2">Имя *</label>
+              <input type="text" name="first_name" id="purchase_first_name" required
+                class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary"
+                placeholder="Введите ваше имя">
+            </div>
+            <div class="text-left">
+              <label for="purchase_last_name" class="block text-primary/70 font-medium mb-2">Фамилия *</label>
+              <input type="text" name="last_name" id="purchase_last_name" required
+                class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary"
+                placeholder="Введите вашу фамилию">
+            </div>
+          </div>
+
+          <!-- Email и Телефон в одну строку -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 md:mb-8 lg:mb-11">
+            <div class="text-left">
+              <label for="purchaseEmail" class="block text-primary/70 font-medium mb-2">Email *</label>
+              <input type="email" name="email" id="purchaseEmail" required
+                class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary"
+                placeholder="Введите ваш email">
+            </div>
+            <div class="text-left">
+              <label for="purchase_phone" class="block text-primary/70 font-medium mb-2">Телефон *</label>
+              <input type="tel" name="phone_number" id="purchase_phone" required
+                class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary"
+                placeholder="Введите ваш телефон">
+            </div>
+          </div>
+
+          <!-- Промокод отдельно -->
+          <div class="text-left mb-5 md:mb-8 lg:mb-11">
+            <label for="purchase_promo" class="block text-primary/70 font-medium mb-2">Промокод</label>
+            <input type="text" name="promo_code" id="purchase_promo"
+              class="w-full border border-primary/20 rounded-[14px] px-6 py-5 text-primary font-normal placeholder:text-primary/50 outline-none focus:border-primary"
+              placeholder="Введите промокод (необязательно)">
+          </div>
+          
+          <button type="submit"
+            class="block w-full font-semibold bg-gradient-display hover-opacity-75 text-primary lg:text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5 mb-3.5 lg:mb-4">
+            Купить курс
+          </button>
+
+          <button type="button" onclick="closePurchaseModal()"
+            class="font-medium underline underline-offset-4 text-primary/50 hover-opacity-75">
+            Отмена
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #videoModal {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    #videoModal .relative {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    #videoPlayer {
+      border-radius: 0;
+    }
+    
+    @media (max-width: 640px) {
+      #videoModal .relative {
+        margin: 0.5rem;
+        width: calc(100vw - 1rem);
+        max-width: calc(100vw - 1rem);
+      }
+      
+      #videoPlayer {
+        max-height: 50vh;
+      }
+    }
+    
+    @media (min-width: 641px) {
+      #videoModal .relative {
+        width: 90vw;
+        max-width: 80rem;
+      }
+      
+      #videoPlayer {
+        max-height: 75vh;
+      }
+    }
+    
+    #videoPlayer {
+      border-radius: 0;
+      object-fit: contain;
+    }
+  </style>
+
+  <script>
+    function openVideoModal(url, title) {
+      document.getElementById('videoTitle').textContent = title;
+      document.getElementById('videoPlayer').src = url;
+      document.getElementById('videoModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal() {
+      document.getElementById('videoModal').style.display = 'none';
+      document.getElementById('videoPlayer').pause();
+      document.getElementById('videoPlayer').src = '';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('videoModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeVideoModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeVideoModal();
+        closeAccessModal();
+      }
+    });
+
+    // Access Modal Functions
+    function openAccessModal() {
+      document.getElementById('accessModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAccessModal() {
+      document.getElementById('accessModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Handle access form submission
+    document.getElementById('accessForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      fetch('{% url "courses:create_order" course.id %}', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          closeAccessModal();
+          this.reset();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при отправке заявки: ' + error.message);
+      });
+    });
+
+    // Close access modal when clicking outside
+    document.getElementById('accessModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAccessModal();
+      }
+    });
+
+    // Purchase Modal Functions
+    function openPurchaseModal() {
+      document.getElementById('purchaseModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePurchaseModal() {
+      document.getElementById('purchaseModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+      document.getElementById('purchaseForm').reset();
+    }
+
+    // Handle purchase form submission
+    document.getElementById('purchaseForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      
+      fetch('{% url "courses:create_order" course.id %}', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          closePurchaseModal();
+          this.reset();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при отправке заявки: ' + error.message);
+      });
+    });
+
+    // Close purchase modal when clicking outside
+    document.getElementById('purchaseModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePurchaseModal();
+      }
+    });
+
+    // Rating stars functionality
+    let selectedRating = 0;
+    const starButtons = document.querySelectorAll('.star-btn');
+    const ratingInput = document.getElementById('review_rating');
+    const ratingText = document.getElementById('rating-text');
+    
+    starButtons.forEach((button, index) => {
+      button.addEventListener('click', function() {
+        selectedRating = parseInt(this.dataset.rating);
+        ratingInput.value = selectedRating;
+        
+        // Update rating display
+        starButtons.forEach((button, buttonIndex) => {
+          if (buttonIndex < selectedRating) {
+            button.classList.add('bg-primary', 'text-white', 'scale-110');
+            button.classList.remove('border-primary/30', 'text-primary');
+          } else {
+            button.classList.remove('bg-primary', 'text-white', 'scale-110');
+            button.classList.add('border-primary/30', 'text-primary');
+          }
+        });
+        
+        // Update rating text
+        const ratingTexts = ['', 'Очень плохо', 'Плохо', 'Нормально', 'Хорошо', 'Отлично'];
+        ratingText.textContent = ratingTexts[selectedRating];
+      });
+      
+      button.addEventListener('mouseenter', function() {
+        const hoverRating = parseInt(this.dataset.rating);
+        starButtons.forEach((btn, btnIndex) => {
+          if (btnIndex < hoverRating) {
+            btn.classList.add('bg-primary/20', 'scale-105');
+          }
+        });
+      });
+      
+      button.addEventListener('mouseleave', function() {
+        starButtons.forEach((btn, btnIndex) => {
+          if (btnIndex >= selectedRating) {
+            btn.classList.remove('bg-primary/20', 'scale-105');
+          }
+        });
+      });
+    });
+
+    // Review form submission
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (selectedRating === 0) {
+        alert('Пожалуйста, выберите рейтинг');
+        return;
+      }
+      
+      const formData = new FormData(this);
+      const url = `{% url 'courses:create_review' course.id %}`;
+      
+      fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          this.reset();
+          // Reset rating display
+          selectedRating = 0;
+          ratingInput.value = '';
+          starButtons.forEach(button => {
+            button.classList.remove('bg-primary', 'text-white', 'bg-primary/20', 'scale-110', 'scale-105');
+            button.classList.add('border-primary/30', 'text-primary');
+          });
+          ratingText.textContent = 'Выберите рейтинг';
+          // Reload page to show new review
+          location.reload();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при отправке отзыва');
+      });
+    });
+  </script>
+{% endblock %}

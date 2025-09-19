@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}О нас - Profactive{% endblock %}
+
+{% block content %}
+<main class="container-base">
+    <!-- Hero -->
+
+    <section class="mb-12 md:mb-20 lg:mb-31">
+      <div class="pt-10 md:pt-17 lg:pt-25">
+        <div class="mb-5 md:mb-8 lg:mb-11" data-aos="fade-up">
+          <p class="text-white/50 lg:text-xl mb-3.5">
+            {% if about_page and about_page.subtitle %}{{ about_page.subtitle }}{% else %}Получайте 16% с каждой продажи!{% endif %}
+          </p>
+          <h2 class=" text-2xl md:text-4xl lg:text-[54px]">
+            {% if about_page and about_page.title %}{{ about_page.title }}{% else %}О нас{% endif %}
+          </h2>
+        </div>
+
+        {% for section in about_sections %}
+        <div class="flex max-md:flex-col md:items-center justify-between gap-5 mb-8 md:mb-15 lg:mb-31" data-aos="fade-up" data-aos-delay="{% cycle '100' '200' '300' %}">
+          <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl" data-aos="fade-right" data-aos-delay="{% cycle '200' '300' '400' %}">
+            {% if section.image %}
+              <img class="size-full object-cover" src="{{ section.image.url }}" alt="{{ section.title }}">
+            {% else %}
+              <img class="size-full object-cover" src="{% static 'assets/images/referall-img(4).png' %}" alt="images">
+            {% endif %}
+          </div>
+          <div class="w-full max-w-145 flex-1" data-aos="fade-left" data-aos-delay="{% cycle '300' '400' '500' %}">
+            <h3 class="text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6 max-w-120 w-full">
+              {{ section.get_highlighted_title|safe }}
+            </h3>
+            <p class=" text-white/50 mb-2 md:mb-8 lg:mb-13.5">{{ section.description }}</p>
+
+            {% if section.button_text and section.button_url %}
+            <a href="{{ section.button_url }}" target="_blank"
+              class="block bg-gradient-display hover-opacity-75 max-w-68 w-full  text-primary text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5">
+              {{ section.button_text }}
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <!-- Default sections -->
+        <div class="flex max-md:flex-col md:items-center justify-between gap-5 mb-8 md:mb-15 lg:mb-31" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl" data-aos="fade-right" data-aos-delay="200">
+            <img class="size-full object-cover" src="{% static 'assets/images/referall-img(4).png' %}" alt="images">
+          </div>
+          <div class="w-full max-w-145 flex-1" data-aos="fade-left" data-aos-delay="300">
+            <h3 class="text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6 max-w-120 w-full">
+              <span class="text-gradient-display">Profactive: Ваш ключ </span>
+              к новым возможностям!
+            </h3>
+            <p class=" text-white/50 mb-2 md:mb-8 lg:mb-13.5">Устали стоять на месте? Хотите освоить
+              востребованную профессию,
+              повысить свою квалификацию или просто расширить горизонты знаний? Учебный центр Profactive –
+              это место, где ваши амбиции обретают реальные формы. Мы предлагаем современные,
+              практико-ориентированные курсы, разработанные ведущими экспертами в своих областях. Учитесь
+              у лучших, достигайте большего с Profactive!</p>
+
+            <a href="#"
+              class="block bg-gradient-display hover-opacity-75 max-w-68 w-full  text-primary text-lg text-center leading-none rounded-[14px] py-3.5 lg:py-5">
+              Узнать подробнее
+            </a>
+          </div>
+        </div>
+
+
+        <div class="flex max-md:flex-col md:items-center justify-between gap-5 mb-8 md:mb-15 lg:mb-31" data-aos="fade-up" data-aos-delay="200">
+          <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl" data-aos="fade-right" data-aos-delay="300">
+            <img class="size-full object-cover" src="{% static 'assets/images/referall-img(3).png' %}" alt="images">
+          </div>
+          <div class="w-full max-w-145 flex-1" data-aos="fade-left" data-aos-delay="400">
+            <h3 class="text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6">
+              Инвестируйте
+              <span class="text-gradient-display">в свое будущее</span>
+            </h3>
+            <p class=" text-white/50">Хотите сделать уверенный шаг вперед в карьере?
+              Мечтаете о повышении
+              или смене сферы деятельности? Учебный центр Profactive поможет вам достичь ваших карьерных
+              целей. Мы предлагаем актуальные образовательные программы, которые соответствуют требованиям
+              рынка труда. Получите знания и навыки, которые откроют вам двери к новым возможностям и
+              успешному будущему. Profactive – ваш надежный партнер в развитии!</p>
+          </div>
+        </div>
+
+
+        <div class="flex max-md:flex-col md:items-center justify-between gap-5" data-aos="fade-up" data-aos-delay="300">
+          <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl" data-aos="fade-right" data-aos-delay="400">
+            <img class="size-full object-cover" src="{% static 'assets/images/referall-img(2).png' %}" alt="images">
+          </div>
+          <div class="w-full max-w-145 flex-1" data-aos="fade-left" data-aos-delay="500">
+            <h3 class="text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6">
+              <span class="text-gradient-display">Обучение</span>
+              для вашего успеха
+            </h3>
+            <p class=" text-white/50">Получите востребованные знания и практические
+              навыки в учебном центре
+              Profactive. Мы предлагаем современные курсы для вашего профессионального и личностного
+              роста. Учитесь с нами, достигайте большего!
+              <br>
+              <br>
+              В современном мире важно не просто учиться, а учиться эффективно. В учебном центре
+              Profactive мы делаем ставку на практические навыки и реальные результаты. Наши программы
+              построены таким образом, чтобы вы могли сразу же применять полученные знания в работе и
+              жизни. Откройте для себя новые перспективы и станьте востребованным специалистом вместе с
+              Profactive!
+            </p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+  </main>
+{% endblock %}

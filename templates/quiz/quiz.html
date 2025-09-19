@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ quiz.title }} - {{ course.name }}{% endblock %}
+
+{% block content %}
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Quiz Header -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div class="text-center mb-8 md:mb-12">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+          {{ quiz.title }}
+        </h1>
+        <p class="text-white/70 text-lg">
+          {{ course.name }}
+        </p>
+        {% if quiz.description %}
+          <p class="text-white/50 text-base mt-4">
+            {{ quiz.description }}
+          </p>
+        {% endif %}
+      </div>
+
+      <!-- Quiz Info -->
+      <div class="bg-white/10 border border-white/20 rounded-2xl p-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div>
+            <div class="text-2xl font-bold text-white">{{ questions|length }}</div>
+            <div class="text-white/70">Вопросов</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ quiz.time_limit }}</div>
+            <div class="text-white/70">Минут</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-white">{{ quiz.passing_score }}%</div>
+            <div class="text-white/70">Проходной балл</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz Form -->
+    <section class="mb-8">
+      <form id="quizForm" method="post" action="{% url 'courses:submit_quiz' course.id %}">
+        {% csrf_token %}
+        
+        <div class="space-y-6">
+          {% for question in questions %}
+            <div class="bg-white text-primary rounded-3xl p-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+              <div class="mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                  <span class="bg-gradient-display text-primary font-bold rounded-full w-8 h-8 flex items-center justify-center text-sm">
+                    {{ forloop.counter }}
+                  </span>
+                  <h3 class="text-lg font-semibold text-primary">Вопрос {{ forloop.counter }}</h3>
+                </div>
+                <p class="text-primary text-base leading-relaxed">{{ question.question_text }}</p>
+              </div>
+
+              <div class="space-y-3">
+                <label class="flex items-center p-4 border-2 border-primary/20 rounded-xl hover:border-primary/40 transition-colors cursor-pointer">
+                  <input type="radio" name="question_{{ question.id }}" value="A" class="mr-3 text-primary focus:ring-primary">
+                  <span class="text-primary font-medium">A. {{ question.option_a }}</span>
+                </label>
+                
+                <label class="flex items-center p-4 border-2 border-primary/20 rounded-xl hover:border-primary/40 transition-colors cursor-pointer">
+                  <input type="radio" name="question_{{ question.id }}" value="B" class="mr-3 text-primary focus:ring-primary">
+                  <span class="text-primary font-medium">B. {{ question.option_b }}</span>
+                </label>
+                
+                <label class="flex items-center p-4 border-2 border-primary/20 rounded-xl hover:border-primary/40 transition-colors cursor-pointer">
+                  <input type="radio" name="question_{{ question.id }}" value="C" class="mr-3 text-primary focus:ring-primary">
+                  <span class="text-primary font-medium">C. {{ question.option_c }}</span>
+                </label>
+                
+                <label class="flex items-center p-4 border-2 border-primary/20 rounded-xl hover:border-primary/40 transition-colors cursor-pointer">
+                  <input type="radio" name="question_{{ question.id }}" value="D" class="mr-3 text-primary focus:ring-primary">
+                  <span class="text-primary font-medium">D. {{ question.option_d }}</span>
+                </label>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-8">
+          <button type="submit" id="submitBtn" 
+                  class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-8 py-4 text-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            Завершить тест
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Timer Modal -->
+  <div id="timerModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75" style="display: none;">
+    <div class="bg-white text-primary rounded-3xl p-8 text-center max-w-md mx-4">
+      <div class="text-6xl font-bold text-red-500 mb-4" id="timerDisplay">30:00</div>
+      <h3 class="text-2xl font-bold mb-4">Время истекает!</h3>
+      <p class="text-primary/70 mb-6">У вас осталось мало времени для завершения теста</p>
+      <button onclick="closeTimerModal()" class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-6 py-3">
+        Понятно
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Modal -->
+  <div id="loadingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75" style="display: none;">
+    <div class="bg-white text-primary rounded-3xl p-8 text-center max-w-md mx-4">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+      <h3 class="text-2xl font-bold mb-4">Обработка результатов...</h3>
+      <p class="text-primary/70">Пожалуйста, подождите</p>
+    </div>
+  </div>
+
+  <style>
+    .bg-gradient-display {
+      background: linear-gradient(135deg, #F0E263 0%, #C28D31 100%);
+    }
+    
+    .hover-opacity-75:hover {
+      opacity: 0.75;
+    }
+
+    /* Custom radio button styling */
+    input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #F0E263;
+    }
+
+    /* Selected option styling */
+    label:has(input[type="radio"]:checked) {
+      border-color: #F0E263 !important;
+      background-color: rgba(240, 226, 99, 0.1);
+    }
+  </style>
+
+  <script>
+    let timeLeft = {{ quiz.time_limit }} * 60; // Convert minutes to seconds
+    let timerInterval;
+    let isSubmitted = false;
+
+    // Start timer
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        
+        if (timeLeft <= 0) {
+          submitQuiz();
+        } else if (timeLeft <= 300) { // Show warning at 5 minutes
+          showTimerWarning();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timerDisplay').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function showTimerWarning() {
+      if (timeLeft <= 300 && timeLeft > 0) {
+        document.getElementById('timerModal').style.display = 'flex';
+        setTimeout(() => {
+          closeTimerModal();
+        }, 5000);
+      }
+    }
+
+    function closeTimerModal() {
+      document.getElementById('timerModal').style.display = 'none';
+    }
+
+    function submitQuiz() {
+      if (isSubmitted) return;
+      
+      isSubmitted = true;
+      clearInterval(timerInterval);
+      
+      // Check if all questions are answered
+      const totalQuestions = {{ questions|length }};
+      const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+      
+      if (answeredQuestions < totalQuestions) {
+        if (!confirm(`Вы ответили только на ${answeredQuestions} из ${totalQuestions} вопросов. Завершить тест?`)) {
+          isSubmitted = false;
+          startTimer();
+          return;
+        }
+      }
+      
+      // Show loading modal
+      document.getElementById('loadingModal').style.display = 'flex';
+      
+      // Disable submit button
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Обработка...';
+      
+      // Submit form
+      document.getElementById('quizForm').submit();
+    }
+
+    // Form submission
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitQuiz();
+    });
+
+    // Start timer when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      startTimer();
+    });
+
+    // Prevent page refresh with unsaved changes
+    window.addEventListener('beforeunload', function(e) {
+      if (!isSubmitted) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+  </script>
+{% endblock %}

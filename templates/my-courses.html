@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мои курсы{% endblock %}
+
+{% block content %}
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Header -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div class="text-center mb-8 md:mb-12">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+          Мои курсы
+        </h1>
+        <p class="text-white/70 text-lg">
+          Здесь вы можете найти все заказанные вами курсы
+        </p>
+      </div>
+
+      {% if orders %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {% for order in orders %}
+            <div class="bg-white/5 border-2 border-white/20 rounded-2xl overflow-hidden hover:border-white/40 transition-all duration-300" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+              <!-- Course Image -->
+              <div class="aspect-video overflow-hidden">
+                {% if order.course.image %}
+                  <img class="w-full h-full object-cover" src="{{ order.course.image.url }}" alt="{{ order.course.name }}">
+                {% else %}
+                  <img class="w-full h-full object-cover" src="{% static 'assets/images/main-hero.png' %}" alt="{{ order.course.name }}">
+                {% endif %}
+              </div>
+
+              <!-- Course Content -->
+              <div class="p-4 lg:p-6">
+                <!-- Status Badge -->
+                <div class="mb-4">
+                  {% if order.is_active %}
+                    <span style="display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 500; background-color: rgba(34, 197, 94, 0.2); color: #22c55e;">
+                      <span style="width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; margin-right: 8px;"></span>
+                      Доступ открыт
+                    </span>
+                  {% else %}
+                    <span style="display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 500; background-color: rgba(239, 68, 68, 0.2); color: #ef4444;">
+                      <span style="width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; margin-right: 8px;"></span>
+                      На рассмотрении
+                    </span>
+                  {% endif %}
+                </div>
+
+                <!-- Course Info -->
+                <h3 class="text-white font-bold text-lg lg:text-xl mb-2 line-clamp-2">
+                  {{ order.course.name }}
+                </h3>
+                
+                <p class="text-white/70 text-sm mb-4 line-clamp-3">
+                  {{ order.course.description|truncatewords:8 }}
+                </p>
+
+                <!-- Course Meta -->
+                <div class="flex items-center justify-between text-white/50 text-sm mb-4">
+                  <span>{{ order.course.category.name }}</span>
+                  <span>{{ order.order_date|date:"d.m.Y" }}</span>
+                </div>
+
+                <!-- Action Button -->
+                <div class="flex gap-3">
+                  {% if order.is_active %}
+                    <a href="{% url 'courses:ordered_course_detail' order.id %}" 
+                       class="flex-1 bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] py-3 text-center transition-all duration-300">
+                      Открыть курс
+                    </a>
+                  {% else %}
+                    <button disabled 
+                            style="flex: 1; background-color: rgba(107, 114, 128, 0.2); color: #9ca3af; font-weight: 600; border-radius: 14px; padding: 12px 0; text-align: center; cursor: not-allowed; border: none;">
+                      Ожидает активации
+                    </button>
+                  {% endif %}
+                  
+                  <a href="{% url 'courses:ordered_course_detail' order.id %}" 
+                     class="px-4 py-3 border border-white/30 text-white/70 hover:border-white/50 hover:text-white rounded-[14px] transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16">
+          <div class="w-24 h-24 mx-auto mb-6 bg-white/10 rounded-full flex items-center justify-center">
+            <svg class="max-w-8 max-h-8 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-2">У вас пока нет курсов</h3>
+          <p class="text-white/70 mb-6">Закажите свой первый курс и начните обучение</p>
+        </div>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}
