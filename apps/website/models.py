@@ -42,7 +42,7 @@ class FAQ(models.Model):
 
     class Meta:
         verbose_name = "FAQ"
-        verbose_name_plural = "FAQ"
+        verbose_name_plural = "1. FAQ"
         ordering = ['order', 'created_at']
 
     def __str__(self):
@@ -102,8 +102,8 @@ class AboutSection(models.Model):
     )
 
     class Meta:
-        verbose_name = "Секция о нас"
-        verbose_name_plural = "Секции о нас"
+        verbose_name = "О нас"
+        verbose_name_plural = "2. О нас"
         ordering = ['order', 'created_at']
 
     def __str__(self):
@@ -155,7 +155,7 @@ class Blog(models.Model):
 
     class Meta:
         verbose_name = "Блог"
-        verbose_name_plural = "Блоги"
+        verbose_name_plural = "3. Блоги"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -231,7 +231,7 @@ class ReferralRequest(models.Model):
 
     class Meta:
         verbose_name = "Реферальная заявка"
-        verbose_name_plural = "Реферальные заявки"
+        verbose_name_plural = "5. Реферальные заявки"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -314,7 +314,7 @@ class Document(models.Model):
 
     class Meta:
         verbose_name = "Документ"
-        verbose_name_plural = "Документы"
+        verbose_name_plural = "4. Документы"
         ordering = ['order', 'created_at']
 
     def __str__(self):
