@@ -366,7 +366,7 @@ def create_course_order(request, course_id):
                 from apps.website.models import ReferralRequest
                 try:
                     referral = ReferralRequest.objects.get(promo_code=promo_code, is_active=True)
-                    discount_percentage = 16  # 16% discount
+                    discount_percentage = 6  # 16% discount
                     referral_sender = referral
                 except ReferralRequest.DoesNotExist:
                     return JsonResponse({

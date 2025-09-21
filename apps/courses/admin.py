@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.utils.html import format_html
 from .models import (
-    MainCategory, SubCategory, Courses, CourseChapter, CourseChapterVideo, CourseChapterMaterials, CourseReview,
+    Categories, MainCategory, SubCategory, Courses, CourseChapter, CourseChapterVideo, CourseChapterMaterials, CourseReview,
     CourseQuiz, QuizQuestion, QuizAttempt, QuizCertificate)
 
 
@@ -102,6 +102,12 @@ class CoursesAdmin(admin.ModelAdmin):
     list_filter = ['category', 'is_popular', 'created_at']
     search_fields = ['name', 'author', 'description']
     ordering = ['-created_at']
+    
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "category":
+            # Show only sub-categories (categories that have a parent)
+            kwargs["queryset"] = Categories.objects.filter(parent__isnull=False)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(CourseChapter)
