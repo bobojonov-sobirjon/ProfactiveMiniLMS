@@ -108,10 +108,10 @@
                 {% endif %}
               </div>
               <div class="p-4 lg:p-6 flex flex-col flex-1">
-                <h4 class="text-primary text-lg lg:text-basic-23/8.75 mb-2 md:mb-3.5" style="line-clamp: 1; height: 60px;">
+                <h4 class="text-primary text-lg lg:text-basic-23/8.75 mb-2 md:mb-3.5 text-force-wrap" style="line-clamp: 2; height: auto; min-height: 60px;">
                   {{ course.name }}
                 </h4>
-                <p class="text-primary/50 lg:text-lg/7 mb-5 md:mb-8 lg:mb-11 font-medium flex-1">
+                <p class="text-primary/50 lg:text-lg/7 mb-5 md:mb-8 lg:mb-11 font-medium flex-1 text-force-wrap">
                   {{ course.description|truncatewords:5 }}
                 </p>
 
@@ -197,4 +197,14 @@
       </div>
     </section>
 
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .text-force-wrap {
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+</style>
 {% endblock %}

@@ -125,8 +125,8 @@
               </div>
               
               <div class="p-6">
-                <h3 class="text-xl font-bold text-primary mb-3 line-clamp-2 h-15">{{ course.name }}</h3>
-                <p class="text-gray-800 text-sm mb-4 line-clamp-3">{{ course.description|truncatewords:8 }}</p>
+                <h3 class="text-xl font-bold text-primary mb-3 line-clamp-2 h-15 break-words">{{ course.name }}</h3>
+                <p class="text-gray-800 text-sm mb-4 line-clamp-3 break-words">{{ course.description|truncatewords:8 }}</p>
                 
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-2">
@@ -135,7 +135,6 @@
                       Популярный
                     </span>
                     {% endif %}
-                    <span class="text-primary/60 text-sm">{{ course.category.name }}</span>
                   </div>
                   
                   <a href="{% url 'courses:course_detail' course.id %}"

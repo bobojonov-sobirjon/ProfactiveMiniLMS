@@ -12,11 +12,11 @@
     <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
       <div>
         <div class="w-full mb-5 md:mb-8 lg:mb-11" data-aos="fade-down" data-aos-delay="100">
-          <div class="flex items-center gap-4 mb-3.5">
-            <p class="font-medium md:text-lg lg:text-xl text-white/50">
+          <div class="flex items-center gap-4 mb-3.5 min-w-0 md:flex-row flex-col justify-center items-center">
+            <p class="font-medium md:text-lg lg:text-xl text-white/50 flex-shrink-0">
               {{ course.category.name }}
             </p>
-            <h2 class="text-2xl md:text-basic-40 lg:text-[54px]">
+            <h2 class="text-2xl md:text-basic-40 lg:text-[54px] text-center md:text-left text-force-wrap">
               {{ course.name }}
             </h2>
           </div>
@@ -25,12 +25,12 @@
         <!-- Course Statistics -->
         <div class="flex flex-wrap gap-4 mb-6 md:mb-8 lg:mb-11" data-aos="fade-up" data-aos-delay="200">
           <div class="flex items-center gap-2 text-white/70">
-            <span class="w-2 h-2 bg-gradient-display rounded-full"></span>
+            <span class="w-2 h-2 bg-gradient-display rounded-full flex-shrink-0"></span>
             <span class="font-medium">{{ total_lessons }} уроков</span>
           </div>
-          <div class="flex items-center gap-2 text-white/70">
-            <span class="w-2 h-2 bg-gradient-display rounded-full"></span>
-            <span class="font-medium">Продолжительность курса - {{ total_duration_hours }} часов{% if total_duration_minutes > 0 %} {{ total_duration_minutes }} минут{% endif %}</span>
+          <div class="flex items-center gap-2 text-white/70 min-w-0">
+            <span class="w-2 h-2 bg-gradient-display rounded-full flex-shrink-0"></span>
+            <span class="font-medium break-words">Продолжительность курса - {{ total_duration_hours }} часов{% if total_duration_minutes > 0 %} {{ total_duration_minutes }} минут{% endif %}</span>
           </div>
         </div>
 
@@ -59,9 +59,9 @@
                 {% if chapters_with_content %}
                   {% for chapter_data in chapters_with_content %}
                     <div class="mb-4">
-                      <div class="flex items-center justify-between">
-                        <h5 class="font-semibold text-primary">{{ chapter_data.chapter.title }}</h5>
-                        <div class="text-xs text-primary/50">
+                      <div class="flex items-center justify-between gap-2 min-w-0">
+                        <h5 class="font-semibold text-primary flex-1 break-words min-w-0">{{ chapter_data.chapter.title }}</h5>
+                        <div class="text-xs text-primary/50 flex-shrink-0 whitespace-nowrap">
                           {% if chapter_data.total_duration_hours > 0 %}
                             {{ chapter_data.total_duration_hours }}ч {{ chapter_data.total_duration_minutes }}м
                           {% elif chapter_data.total_duration_minutes > 0 %}
@@ -96,9 +96,9 @@
                 {% if chapter_data.chapter.is_activate %}
                   <button @click="open = !open" 
                     class="w-full flex items-center justify-between p-4 lg:p-6 hover:bg-white/5 transition-colors">
-                    <div class="flex items-center gap-4">
-                      <span class="text-white/50 font-medium text-sm">{{ forloop.counter|stringformat:"02d" }}</span>
-                      <h4 class="text-white font-semibold text-lg lg:text-xl">{{ chapter_data.chapter.title }}</h4>
+                    <div class="flex items-center gap-4 min-w-0">
+                      <span class="text-white/50 font-medium text-sm flex-shrink-0">{{ forloop.counter|stringformat:"02d" }}</span>
+                      <h4 class="text-white font-semibold text-lg lg:text-xl break-words min-w-0">{{ chapter_data.chapter.title }}</h4>
                     </div>
                     <div class="p-2">
                       <svg :class="open ? 'rotate-45' : ''" class="transition-all duration-500 ease-in-out text-white/70" width="20" height="20"
@@ -110,9 +110,9 @@
                 {% else %}
                   <button @click="alert('Нет доступа')" 
                     class="w-full flex items-center justify-between p-4 lg:p-6 opacity-50 hover:opacity-70 transition-opacity">
-                    <div class="flex items-center gap-4">
-                      <span class="text-white/50 font-medium text-sm">{{ forloop.counter|stringformat:"02d" }}</span>
-                      <h4 class="text-white font-semibold text-lg lg:text-xl">{{ chapter_data.chapter.title }}</h4>
+                    <div class="flex items-center gap-4 min-w-0">
+                      <span class="text-white/50 font-medium text-sm flex-shrink-0">{{ forloop.counter|stringformat:"02d" }}</span>
+                      <h4 class="text-white font-semibold text-lg lg:text-xl break-words min-w-0">{{ chapter_data.chapter.title }}</h4>
                     </div>
                     <div class="p-2">
                       <svg class="text-white/30" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -147,9 +147,9 @@
                                   </svg>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                  <p class="text-white font-medium break-words">{{ video.title }}</p>
+                                  <p class="text-white font-medium break-words min-w-0">{{ video.title }}</p>
                                   {% if video.description %}
-                                    <p class="text-white/50 text-sm break-words mt-1">{{ video.description|truncatewords:15 }}</p>
+                                    <p class="text-white/50 text-sm break-words mt-1 min-w-0">{{ video.description|truncatewords:15 }}</p>
                                   {% endif %}
                                 </div>
                               </div>
@@ -191,9 +191,9 @@
                                   {% endif %}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                  <p class="text-white font-medium break-words">{{ material.title }}</p>
+                                  <p class="text-white font-medium break-words min-w-0">{{ material.title }}</p>
                                   {% if material.description %}
-                                    <p class="text-white/50 text-sm break-words mt-1">{{ material.description|truncatewords:15 }}</p>
+                                    <p class="text-white/50 text-sm break-words mt-1 min-w-0">{{ material.description|truncatewords:15 }}</p>
                                   {% endif %}
                                 </div>
                               </div>
@@ -540,6 +540,30 @@
   </div>
 
   <style>
+    /* Text overflow utilities */
+    .text-overflow-ellipsis {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .text-overflow-wrap {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
+    }
+    
+    .text-force-wrap {
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+    }
+    
+    .min-w-0 {
+      min-width: 0;
+    }
+    
     #videoModal {
       animation: fadeIn 0.3s ease-out;
     }
