@@ -79,8 +79,9 @@ def contacts(request):
     return render(request, 'contacts.html')
 
 def login(request):
-    """Login page view"""
-    return render(request, 'login.html')
+    """Login page view - redirect to accounts login"""
+    from django.shortcuts import redirect
+    return redirect('/accounts/login/')
 
 def documentation(request):
     """Documentation page view"""

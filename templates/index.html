@@ -100,10 +100,10 @@
             <div class="group bg-white rounded-3xl overflow-hidden flex flex-col h-full">
               <div class="h-40 md:h-56 w-full relative overflow-hidden">
                 {% if course.image %}
-                  <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
+                  <img class="relative z-0 size-full transition duration-200 group-hover:scale-105"
                        src="{{ course.image.url }}" alt="{{ course.name }}">
                 {% else %}
-                  <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
+                  <img class="relative z-0 size-full transition duration-200 group-hover:scale-105"
                        src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
                 {% endif %}
               </div>
