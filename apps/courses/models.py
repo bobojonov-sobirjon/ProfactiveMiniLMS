@@ -18,6 +18,22 @@ class Categories(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_total_courses_count(self):
+        """Get total count of courses in this category and all its subcategories"""
+        # Get all subcategories recursively
+        def get_all_subcategories(category):
+            subcategories = Categories.objects.filter(parent=category)
+            all_subcategories = list(subcategories)
+            for subcategory in subcategories:
+                all_subcategories.extend(get_all_subcategories(subcategory))
+            return all_subcategories
+        
+        # Get all categories (current + all subcategories)
+        all_categories = [self] + get_all_subcategories(self)
+        
+        # Count courses in all these categories
+        return Courses.objects.filter(category__in=all_categories).count()
 
 
 class MainCategory(Categories):
