@@ -344,3 +344,25 @@ class Document(models.Model):
                 return f"{size:.1f} {unit}"
             size /= 1024.0
         return f"{size:.1f} TB"
+
+
+class DiscountForReferral(models.Model):
+    """Discount model for referral program"""
+    percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name="Процент скидки",
+        help_text="Процент скидки (например: 6.00 для 6%)"
+    )
+
+    class Meta:
+        verbose_name = "Скидка для рефералов"
+        verbose_name_plural = "6. Скидки для рефералов"
+
+    def __str__(self):
+        return f"{self.percentage}%"
+
+    @classmethod
+    def get_active_discount(cls):
+        """Возвращает активную скидку"""
+        return cls.objects.first()

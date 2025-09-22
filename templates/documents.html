@@ -72,7 +72,7 @@
           <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1">
             <div class="w-full max-w-145">
               <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
-                Получайте 6% с каждой продажи!
+                Получайте {% if referral_discount %}{{ referral_discount.percentage|floatformat:0 }}{% else %}6{% endif %}% с каждой продажи!
               </p>
 
               <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">

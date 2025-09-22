@@ -3,7 +3,7 @@ from django.http import HttpResponseNotFound, JsonResponse
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import FAQ, AboutSection, Blog, ReferralRequest, Document
+from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral
 from apps.courses.models import Categories, Courses
 
 def custom_404(request, exception=None):
@@ -17,10 +17,11 @@ def home(request):
     
     # Get popular courses
     popular_courses = Courses.objects.filter(is_popular=True).order_by('-created_at')
-    
+    print(DiscountForReferral.get_active_discount())
     context = {
         'main_categories': main_categories,
         'popular_courses': popular_courses,
+        'referral_discount': DiscountForReferral.get_active_discount(),
     }
     
     return render(request, 'index.html', context)
@@ -32,13 +33,17 @@ def about(request):
     
     context = {
         'about_sections': about_sections,
+        'referral_discount': DiscountForReferral.get_active_discount(),
     }
     
     return render(request, 'about.html', context)
 
 def services(request):
     """Services page view"""
-    return render(request, 'services.html')
+    context = {
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'services.html', context)
 
 def course_catalogue(request):
     """Course catalogue page view"""
@@ -64,19 +69,31 @@ def course_catalogue(request):
 
 def materials(request):
     """Materials page view"""
-    return render(request, 'materials.html')
+    context = {
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'materials.html', context)
 
 def popular(request):
     """Popular courses page view"""
-    return render(request, 'popular.html')
+    context = {
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'popular.html', context)
 
 def referal(request):
     """Referral program page view"""
-    return render(request, 'referal.html')
+    context = {
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'referal.html', context)
 
 def contacts(request):
     """Contacts page view"""
-    return render(request, 'contacts.html')
+    context = {
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'contacts.html', context)
 
 def login(request):
     """Login page view - redirect to accounts login"""
@@ -85,12 +102,19 @@ def login(request):
 
 def documentation(request):
     """Documentation page view"""
-    return render(request, 'documentation.html')
+    context = {
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'documentation.html', context)
 
 def get_faqs(request):
     """FAQ page view"""
     faqs = FAQ.objects.filter(is_active=True).order_by('order', 'created_at')
-    return render(request, 'faq.html', {'faqs': faqs})
+    context = {
+        'faqs': faqs,
+        'referral_discount': DiscountForReferral.get_active_discount(),
+    }
+    return render(request, 'faq.html', context)
 
 def blog(request):
     """Blog page view with Alpine.js show more functionality"""

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import FAQ, AboutSection, Blog, ReferralRequest, Document
+from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
@@ -140,3 +140,18 @@ class DocumentAdmin(admin.ModelAdmin):
     def file_size_display(self, obj):
         return obj.get_file_size_display()
     file_size_display.short_description = "Размер файла"
+
+
+@admin.register(DiscountForReferral)
+class DiscountForReferralAdmin(admin.ModelAdmin):
+    """Discount for referral admin configuration"""
+    list_display = ['id', 'percentage']
+    list_display_links = ['id']
+    search_fields = ['percentage']
+    list_editable = ['percentage']
+    
+    fieldsets = (
+        ('Процент скидки', {
+            'fields': ('percentage',)
+        }),
+    )

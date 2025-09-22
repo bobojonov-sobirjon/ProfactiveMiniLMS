@@ -10,7 +10,7 @@ class Command(BaseCommand):
         about_page, created = AboutPage.objects.get_or_create(
             title="О нас",
             defaults={
-                'subtitle': "Получайте 16% с каждой продажи!",
+                'subtitle': "Получайте скидку с каждой продажи!",
                 'is_active': True
             }
         )

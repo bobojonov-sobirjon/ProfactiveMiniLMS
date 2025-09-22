@@ -10,6 +10,7 @@ import json
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 from .models import Courses, CourseChapter, CourseChapterVideo, CourseChapterMaterials, Categories, CourseReview, CourseQuiz, QuizQuestion, QuizAttempt, QuizCertificate
+from apps.website.models import DiscountForReferral
 from apps.order.models import CourseOrder, CourseChapterForOrderedUser, CourseVideoForOrderedUser, CourseMaterialForOrderedUser, UserVideoProgress
 
 
@@ -82,6 +83,7 @@ def course_detail(request, course_id):
         'total_duration_minutes': total_duration_minutes,
         'is_enrolled': is_enrolled,
         'reviews': reviews,
+        'referral_discount': DiscountForReferral.get_active_discount(),
     }
     
     return render(request, 'we-course.html', context)
@@ -137,6 +139,7 @@ def course_catalogue(request):
             'courses': all_courses,
             'selected_sub_category': sub_category_id,
             'is_popular_filter': is_popular_filter,
+            'referral_discount': DiscountForReferral.get_active_discount(),
         })
     
     context = {
@@ -146,6 +149,7 @@ def course_catalogue(request):
         'selected_sub_category': sub_category_id,
         'search_query': search_query,
         'is_popular_filter': is_popular_filter,
+        'referral_discount': DiscountForReferral.get_active_discount(),
     }
     
     return render(request, 'course-catalogue.html', context)
@@ -366,7 +370,10 @@ def create_course_order(request, course_id):
                 from apps.website.models import ReferralRequest
                 try:
                     referral = ReferralRequest.objects.get(promo_code=promo_code, is_active=True)
-                    discount_percentage = 6  # 16% discount
+                    # Get discount from database or use default
+                    from apps.website.models import DiscountForReferral
+                    discount_obj = DiscountForReferral.get_active_discount()
+                    discount_percentage = float(discount_obj.percentage) if discount_obj else 6
                     referral_sender = referral
                 except ReferralRequest.DoesNotExist:
                     return JsonResponse({
