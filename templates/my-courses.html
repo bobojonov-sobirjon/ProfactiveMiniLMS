@@ -24,9 +24,9 @@
               <!-- Course Image -->
               <div class="aspect-video overflow-hidden">
                 {% if order.course.image %}
-                  <img class="w-full h-full object-cover" src="{{ order.course.image.url }}" alt="{{ order.course.name }}">
+                  <img class="w-full h-full object-container" src="{{ order.course.image.url }}" alt="{{ order.course.name }}">
                 {% else %}
-                  <img class="w-full h-full object-cover" src="{% static 'assets/images/main-hero.png' %}" alt="{{ order.course.name }}">
+                  <img class="w-full h-full object-container" src="{% static 'assets/images/main-hero.png' %}" alt="{{ order.course.name }}">
                 {% endif %}
               </div>
 
