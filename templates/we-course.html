@@ -36,12 +36,12 @@
 
         <div class="flex max-md:flex-col justify-between gap-4 lg:gap-6 mb-5 md:mb-8 lg:mb-11" data-aos="fade-right" data-aos-delay="300">
           <!-- Left -->
-          <div class="max-w-198 w-full space-y-5 md:space-y-8 lg:space-y-11 flex-1">
-            <div class="aspect-square lg:aspect-[792/544] rounded-3xl overflow-hidden">
+          <div class="max-w-198 w-full space-y-5 md:space-y-8 lg:space-y-11 flex-1 mb-10">
+            <div class="rounded-3xl overflow-hidden">
               {% if course.image %}
-                <img class="size-full object-cover" src="{{ course.image.url }}" alt="{{ course.name }}">
+                <img class="object-contain rounded-3xl" src="{{ course.image.url }}" alt="{{ course.name }}">
               {% else %}
-                <img class="size-full object-cover" src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
+                <img class="object-cover rounded-3xl" src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
               {% endif %}
             </div>
           </div>
@@ -301,9 +301,9 @@
                 Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
               </h2>
 
-              <button class="bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
+              <a href="{% url 'referal' %}" class="inline-block bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
                 Узнать подробнее
-              </button>
+              </a>
             </div>
           </div>
           <!-- Right -->
