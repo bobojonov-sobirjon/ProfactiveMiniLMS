@@ -17,6 +17,7 @@ urlpatterns = [
     path('documentation/', views.documentation, name='documentation'),
     path('documents/', views.documents_page, name='documents'),
     path('download/<int:document_id>/', views.download_document, name='download_document'),
+    path('download-privacy-policy/', views.download_privacy_policy, name='download_privacy_policy'),
     path('faq/', views.get_faqs, name='faq'),
     path('blog/', views.blog, name='blog'),
     path('reviews/', courses_views.reviews_page, name='reviews'),

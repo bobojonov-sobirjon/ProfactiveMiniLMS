@@ -9,55 +9,55 @@
   <section class="mb-12 md:mb-20 lg:mb-31">
     <div class="pt-10 md:pt-17 lg:pt-25">
       <div class="mb-5 md:mb-8 lg:mb-11">
-        <p class="text-white/50 lg:text-xl mb-3.5">
+        <p class="text-white/50 text-sm sm:text-base lg:text-xl mb-3.5">
           Получайте {% if referral_discount %}{{ referral_discount.percentage|floatformat:0 }}{% else %}6{% endif %}% с каждой продажи! </p>
-        <h2 class=" text-2xl md:text-4xl lg:text-[54px]">
+        <h2 class="text-xl sm:text-2xl md:text-4xl lg:text-[54px] leading-tight">
           Реферальная программа
         </h2>
       </div>
 
       <!-- Referral Request Form -->
       <div class="mb-12 md:mb-20 lg:mb-31">
-        <div class="bg-white/5 border-2 border-white/30 rounded-3xl p-6 md:p-8 lg:p-11">
-          <h3 class="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-6 text-center">
+        <div class="bg-white/5 border-2 border-white/30 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-11">
+          <h3 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-4 sm:mb-6 text-center leading-tight">
             Получить реферальную ссылку
           </h3>
           
           <form id="referralForm" class="space-y-4 md:space-y-6">
             {% csrf_token %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <div>
-                <label for="first_name" class="block text-white/70 font-medium mb-2">Имя *</label>
+                <label for="first_name" class="block text-white/70 font-medium mb-2 text-sm sm:text-base">Имя *</label>
                 <input type="text" id="first_name" name="first_name" required
                   placeholder="Введите ваше имя"
-                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50">
+                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50 text-sm sm:text-base">
               </div>
               <div>
-                <label for="last_name" class="block text-white/70 font-medium mb-2">Фамилия *</label>
+                <label for="last_name" class="block text-white/70 font-medium mb-2 text-sm sm:text-base">Фамилия *</label>
                 <input type="text" id="last_name" name="last_name" required
                   placeholder="Введите вашу фамилию"
-                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50">
+                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50 text-sm sm:text-base">
               </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <div>
-                <label for="email" class="block text-white/70 font-medium mb-2">Email *</label>
+                <label for="email" class="block text-white/70 font-medium mb-2 text-sm sm:text-base">Email *</label>
                 <input type="email" id="email" name="email" required
                   placeholder="example@email.com"
-                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50">
+                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50 text-sm sm:text-base">
               </div>
               <div>
-                <label for="phone_number" class="block text-white/70 font-medium mb-2">Номер телефона *</label>
+                <label for="phone_number" class="block text-white/70 font-medium mb-2 text-sm sm:text-base">Номер телефона *</label>
                 <input type="tel" id="phone_number" name="phone_number" required
                   placeholder="+998 90 123 45 67"
-                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50">
+                  class="w-full border border-white/20 rounded-[14px] px-4 py-3 text-white bg-white/10 placeholder:text-white/50 outline-none focus:border-white/50 text-sm sm:text-base">
               </div>
             </div>
             
             <div class="text-center">
               <button type="submit" 
-                class="bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-8 py-3 lg:py-4 text-lg">
+                class="bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-6 py-3 sm:px-8 lg:py-4 text-base sm:text-lg w-full sm:w-auto">
                 Получить реферальную ссылку
               </button>
             </div>
@@ -65,52 +65,69 @@
         </div>
       </div>
 
-      <div class="flex max-md:flex-col md:items-center justify-between gap-3 lg:gap-5 mb-8 md:mb-15 lg:mb-31">
-        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl">
+      {% for step in referral_steps %}
+      <div class="flex max-md:flex-col md:items-center justify-between gap-4 sm:gap-3 lg:gap-5 {% if not forloop.last %}mb-8 md:mb-15 lg:mb-31{% endif %}">
+        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-2xl sm:rounded-3xl">
+          <img class="size-full object-cover" src="{{ step.image.url }}" alt="{{ step.title|safe }}">
+        </div>
+        <div class="w-full max-w-145 flex-1">
+          <h3 class="font-semibold text-lg sm:text-xl lg:text-2xl lg:text-[38px] mb-3 sm:mb-2 lg:mb-6 w-full leading-tight">
+            {{ step.get_highlighted_title|safe }}
+          </h3>
+          <p class="text-white/50 text-sm sm:text-base leading-relaxed">
+            {{ step.description|linebreaks }}
+          </p>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Fallback content if no steps are configured -->
+      <div class="flex max-md:flex-col md:items-center justify-between gap-4 sm:gap-3 lg:gap-5 mb-8 md:mb-15 lg:mb-31">
+        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-2xl sm:rounded-3xl">
           <img class="size-full object-cover" src="{% static 'assets/images/referall-img(4).png' %}" alt="images">
         </div>
         <div class="w-full max-w-145 flex-1">
-          <h3 class="font-semibold text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6 w-full">
+          <h3 class="font-semibold text-lg sm:text-xl lg:text-2xl lg:text-[38px] mb-3 sm:mb-2 lg:mb-6 w-full leading-tight">
             <span class="text-gradient-display">1. Регистрация </span>
             в программе
           </h3>
-          <p class=" text-white/50">
+          <p class="text-white/50 text-sm sm:text-base leading-relaxed">
             Клиент получает уникальную ссылку или промокод.
           </p>
         </div>
       </div>
 
-      <div class="flex max-md:flex-col md:items-center justify-between gap-3 lg:gap-5 mb-8 md:mb-15 lg:mb-31">
-        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl">
+      <div class="flex max-md:flex-col md:items-center justify-between gap-4 sm:gap-3 lg:gap-5 mb-8 md:mb-15 lg:mb-31">
+        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-2xl sm:rounded-3xl">
           <img class="size-full object-cover" src="{% static 'assets/images/referall-img(3).png' %}" alt="images">
         </div>
         <div class="w-full max-w-145 flex-1">
-          <h3 class="text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6">
+          <h3 class="text-lg sm:text-xl lg:text-2xl lg:text-[38px] mb-3 sm:mb-2 lg:mb-6 leading-tight">
             Деление
             <span class="text-gradient-display">ссылкой</span>
           </h3>
-          <p class=" text-white/50">
+          <p class="text-white/50 text-sm sm:text-base leading-relaxed">
             Клиент отправляет ссылку друзьям, делится ею в социальных сетях или личных сообщениях.
           </p>
         </div>
       </div>
 
-      <div class="flex max-md:flex-col md:items-center justify-between gap-3 lg:gap-5">
-        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-3xl">
+      <div class="flex max-md:flex-col md:items-center justify-between gap-4 sm:gap-3 lg:gap-5">
+        <div class="flex-1 md:max-w-121 aspect-square md:aspect-[484/544] relative overflow-hidden rounded-2xl sm:rounded-3xl">
           <img class="size-full object-cover" src="{% static 'assets/images/referall-img(2).png' %}" alt="images">
         </div>
         <div class="w-full max-w-145 flex-1">
-          <h3 class="text-xl lg:text-2xl lg:text-[38px] mb-2 lg:mb-6">
+          <h3 class="text-lg sm:text-xl lg:text-2xl lg:text-[38px] mb-3 sm:mb-2 lg:mb-6 leading-tight">
             Деление
             <span class="text-gradient-display">ссылкой</span>
           </h3>
-          <p class="text-white/50">Новые пользователи переходят по реферальной ссылке или вводят промокод при
+          <p class="text-white/50 text-sm sm:text-base leading-relaxed">Новые пользователи переходят по реферальной ссылке или вводят промокод при
             регистрации и совершают целевое действие - покупку <br><br>
             За каждую успешную рекомендацию с последующей покупкой клиенту начисляется вознаграждение: скидка на
             следующую покупку, баллы на бонусный счёт или деньги.
           </p>
         </div>
       </div>
+      {% endfor %}
     </div>
   </section>
 </main>

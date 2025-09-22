@@ -366,3 +366,175 @@ class DiscountForReferral(models.Model):
     def get_active_discount(cls):
         """Возвращает активную скидку"""
         return cls.objects.first()
+
+
+class ReferralStep(models.Model):
+    """Referral program steps model"""
+    title = models.TextField(
+        verbose_name="Заголовок",
+        help_text="Заголовок шага (может содержать HTML теги)"
+    )
+    description = models.TextField(
+        verbose_name="Описание",
+        help_text="Описание шага"
+    )
+    keywords = models.CharField(
+        max_length=200,
+        verbose_name="Ключевые слова",
+        help_text="Слова которые будут выделены золотым цветом (через запятую)"
+    )
+    image = models.ImageField(
+        upload_to='referral/steps/',
+        verbose_name="Изображение",
+        help_text="Изображение для шага"
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Порядок",
+        help_text="Порядок отображения"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Активен",
+        help_text="Активен ли шаг"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Дата обновления"
+    )
+
+    class Meta:
+        verbose_name = "Шаг реферальной программы"
+        verbose_name_plural = "8. Шаги реферальной программы"
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"Шаг {self.order}: {self.title[:50]}..."
+
+    def get_highlighted_title(self):
+        """Возвращает заголовок с выделенными ключевыми словами"""
+        title = self.title
+        if self.keywords:
+            keywords = [kw.strip() for kw in self.keywords.split(',')]
+            for keyword in keywords:
+                if keyword in title:
+                    title = title.replace(
+                        keyword, 
+                        f'<span class="text-gradient-display">{keyword}</span>'
+                    )
+        return title
+
+
+class MainHeader(models.Model):
+    """Main header model for website homepage"""
+    title = models.CharField(
+        max_length=200,
+        verbose_name="Заголовок",
+        help_text="Основной заголовок главной страницы"
+    )
+    keywords = models.CharField(
+        max_length=200,
+        verbose_name="Ключевые слова",
+        help_text="Слова которые будут выделены золотым цветом (через запятую)"
+    )
+    image = models.ImageField(
+        upload_to='main_header/',
+        verbose_name="Изображение",
+        help_text="Изображение для главного заголовка"
+    )
+    video = models.FileField(
+        upload_to='main_header/videos/',
+        verbose_name="Видео",
+        help_text="Видео для главного заголовка",
+        blank=True,
+        null=True
+    )
+    privacy_policy_file = models.FileField(
+        upload_to='main_header/privacy_policy/',
+        verbose_name="Файл политики конфиденциальности",
+        help_text="PDF файл политики конфиденциальности для скачивания",
+        blank=True,
+        null=True
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Активен",
+        help_text="Активен ли заголовок"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Дата обновления"
+    )
+
+    class Meta:
+        verbose_name = "Главный заголовок"
+        verbose_name_plural = "7. Главные заголовки"
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Заголовок: {self.title[:50]}..."
+
+    def get_highlighted_title(self):
+        """Возвращает заголовок с выделенными ключевыми словами"""
+        title = self.title
+        if self.keywords:
+            keywords = [kw.strip() for kw in self.keywords.split(',')]
+            for keyword in keywords:
+                if keyword in title:
+                    title = title.replace(
+                        keyword, 
+                        f'<span class="text-gradient-display">{keyword}</span>'
+                    )
+        return title
+
+    @classmethod
+    def get_active_header(cls):
+        """Возвращает активный заголовок"""
+        return cls.objects.filter(is_active=True).first()
+
+
+class ContactPage(models.Model):
+    """Contact page model for map iframe"""
+    title = models.CharField(
+        max_length=200,
+        verbose_name="Заголовок",
+        help_text="Заголовок страницы контактов"
+    )
+    map_iframe = models.TextField(
+        verbose_name="Iframe карты",
+        help_text="HTML код iframe для карты (Яндекс, Google Maps и т.д.)"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Активен",
+        help_text="Активна ли страница контактов"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Дата обновления"
+    )
+
+    class Meta:
+        verbose_name = "Страница контактов"
+        verbose_name_plural = "9. Страницы контактов"
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Контакты: {self.title}"
+
+    @classmethod
+    def get_active_contact_page(cls):
+        """Возвращает активную страницу контактов"""
+        return cls.objects.filter(is_active=True).first()

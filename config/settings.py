@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'apps.website.context_processors.faq_context',
                 'apps.website.context_processors.discount_context',
+                'apps.website.context_processors.main_header_context',
             ],
         },
     },

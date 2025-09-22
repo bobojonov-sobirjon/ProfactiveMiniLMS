@@ -1,4 +1,4 @@
-from .models import FAQ, DiscountForReferral
+from .models import FAQ, DiscountForReferral, MainHeader
 
 def faq_context(request):
     """Add FAQ context to all templates"""
@@ -11,4 +11,11 @@ def discount_context(request):
     discount = DiscountForReferral.get_active_discount()
     return {
         'referral_discount': discount
+    }
+
+def main_header_context(request):
+    """Add main header context to all templates"""
+    main_header = MainHeader.get_active_header()
+    return {
+        'main_header': main_header
     }

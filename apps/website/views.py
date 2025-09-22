@@ -3,7 +3,7 @@ from django.http import HttpResponseNotFound, JsonResponse
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral
+from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral, MainHeader, ReferralStep, ContactPage
 from apps.courses.models import Categories, Courses
 
 def custom_404(request, exception=None):
@@ -17,11 +17,15 @@ def home(request):
     
     # Get popular courses
     popular_courses = Courses.objects.filter(is_popular=True).order_by('-created_at')
-    print(DiscountForReferral.get_active_discount())
+    
+    # Get active main header
+    main_header = MainHeader.get_active_header()
+    
     context = {
         'main_categories': main_categories,
         'popular_courses': popular_courses,
         'referral_discount': DiscountForReferral.get_active_discount(),
+        'main_header': main_header,
     }
     
     return render(request, 'index.html', context)
@@ -83,14 +87,22 @@ def popular(request):
 
 def referal(request):
     """Referral program page view"""
+    # Get active referral steps
+    referral_steps = ReferralStep.objects.filter(is_active=True).order_by('order')
+    
     context = {
+        'referral_steps': referral_steps,
         'referral_discount': DiscountForReferral.get_active_discount(),
     }
     return render(request, 'referal.html', context)
 
 def contacts(request):
     """Contacts page view"""
+    # Get active contact page
+    contact_page = ContactPage.get_active_contact_page()
+    
     context = {
+        'contact_page': contact_page,
         'referral_discount': DiscountForReferral.get_active_discount(),
     }
     return render(request, 'contacts.html', context)
@@ -251,3 +263,24 @@ def download_document(request, document_id):
         
     except Document.DoesNotExist:
         return HttpResponseNotFound("Документ не найден")
+
+
+def download_privacy_policy(request):
+    """Download privacy policy file view"""
+    try:
+        main_header = MainHeader.get_active_header()
+        
+        if not main_header or not main_header.privacy_policy_file:
+            return HttpResponseNotFound("Файл политики конфиденциальности не найден")
+        
+        # Возвращаем файл для скачивания
+        from django.http import FileResponse
+        response = FileResponse(
+            main_header.privacy_policy_file, 
+            as_attachment=True, 
+            filename="Политика_конфиденциальности.pdf"
+        )
+        return response
+        
+    except Exception as e:
+        return HttpResponseNotFound("Ошибка при загрузке файла")

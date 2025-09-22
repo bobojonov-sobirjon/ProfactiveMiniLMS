@@ -415,10 +415,17 @@
       </div>
 
       <div class="flex max-lg:flex-col items-center gap-x-11 gap-y-3.5">
+        {% if main_header and main_header.privacy_policy_file %}
+        <a href="{% url 'download_privacy_policy' %}"
+          class="font-medium underline underline-offset-4 text-brand-gray-100 transition duration-200 hover:text-brand-yellow-500">
+          Политика конфиденциальности
+        </a>
+        {% else %}
         <a href="#"
           class="font-medium underline underline-offset-4 text-brand-gray-100 transition duration-200 hover:text-brand-yellow-500">
           Политика конфиденциальности
         </a>
+        {% endif %}
         <a href="{% url 'documents' %}"
           class="font-medium underline underline-offset-4 text-brand-gray-100 transition duration-200 hover:text-brand-yellow-500">
           Документация

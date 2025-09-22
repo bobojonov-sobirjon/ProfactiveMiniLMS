@@ -4,6 +4,14 @@
 {% block title %}Контакты - Profactive{% endblock %}
 
 {% block content %}
+<style>
+  .map-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none;
+    border-radius: 1.5rem;
+  }
+</style>
 <main class="container-base">
   <!-- Hero -->
   <section class="pt-10 md:pt-17 lg:pt-25 pb-10 lg:pb-31">
@@ -17,7 +25,13 @@
       </div>
 
       <div class="bg-white/10 w-full rounded-3xl aspect-square md:aspect-[1200/544] max-h-136 overflow-hidden">
-        <h2 class="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/50 text-center flex items-center justify-center h-full">Яндекс карта</h2>
+        {% if contact_page and contact_page.map_iframe %}
+          <div class="map-container w-full h-full">
+            {{ contact_page.map_iframe|safe }}
+          </div>
+        {% else %}
+          <h2 class="text-2xl md:text-3xl lg:text-4xl font-semibold text-white/50 text-center flex items-center justify-center h-full">Яндекс карта</h2>
+        {% endif %}
       </div>
     </div>
   </section>
