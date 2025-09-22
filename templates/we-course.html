@@ -46,6 +46,24 @@
             </div>
           </div>
 
+          <!-- Course Description -->
+          <div class="w-full mb-6 md:mb-8 lg:mb-11" data-aos="fade-up" data-aos-delay="350">
+            <div class="bg-white/5 border border-white/20 rounded-3xl p-4 lg:p-6">
+              <div class="border-b border-white/20 mb-4 lg:mb-6 pb-2 lg:pb-3.5">
+                <h4 class="max-md:text-center font-semibold text-lg lg:text-basic-23 text-white">
+                  Описание курса
+                </h4>
+              </div>
+              <div class="text-white/70 leading-relaxed">
+                {% if course.description %}
+                  {{ course.description|linebreaks }}
+                {% else %}
+                  <p class="text-white/50 italic">Описание курса пока не добавлено</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
           <!-- Right -->
           <div class="md:max-w-91 w-full flex-1" data-aos="fade-left" data-aos-delay="400">
             <!-- Course Content -->
