@@ -300,7 +300,7 @@
 
                   <!-- Materials Section -->
                   {% for material in chapter.coursematerialforordereduser_set.all %}
-                    <div class="p-3 bg-white/5 border border-white/10 rounded-lg transition-all duration-300 hover:bg-white/10">
+                    <div class="p-3 bg-white/5 border border-white/10 rounded-lg transition-all duration-300 hover:bg-white/10" data-material-id="{{ material.id }}">
                       <div class="flex items-center gap-3 mb-3">
                         <div class="w-8 h-8 bg-gradient-display rounded-full flex items-center justify-center flex-shrink-0">
                           {% if material.material_type == 'image' %}
@@ -336,6 +336,10 @@
                               </svg>
                               <span class="text-sm">Завершите главу</span>
                             </div>
+                            <!-- Hidden download link for JavaScript -->
+                            <a href="{{ material.get_file_url }}" target="_blank" class="hidden material-download-link" data-material-url="{{ material.get_file_url }}">
+                              Скачать
+                            </a>
                           {% endif %}
                         </div>
                       </div>
@@ -571,6 +575,9 @@
       
       // Update chapter status
       updateChapterStatus(videoId);
+      
+      // Unlock materials for current chapter
+      unlockMaterialsForChapter(videoId);
     }
 
     function updateChapterStatus(videoId) {
@@ -613,6 +620,40 @@
         // Check if all chapters are completed and show test button
         checkAllChaptersCompleted();
       }
+    }
+
+    function unlockMaterialsForChapter(videoId) {
+      // Find the current chapter
+      const videoElement = document.querySelector(`[data-video-id="${videoId}"]`);
+      if (!videoElement) return;
+      
+      const chapterElement = videoElement.closest('[x-data]');
+      if (!chapterElement) return;
+      
+      // Find all materials in this chapter
+      const materials = chapterElement.querySelectorAll('[data-material-id]');
+      
+      materials.forEach(material => {
+        // Find the button container
+        const buttonContainer = material.querySelector('.flex.items-center.gap-2');
+        if (!buttonContainer) return;
+        
+        // Check if material is currently locked
+        const lockedDiv = buttonContainer.querySelector('.text-red-400');
+        const hiddenLink = buttonContainer.querySelector('.material-download-link');
+        
+        if (lockedDiv && hiddenLink) {
+          // Get the download URL from hidden link
+          const downloadUrl = hiddenLink.getAttribute('data-material-url');
+          
+          // Replace locked content with download link
+          buttonContainer.innerHTML = `
+            <a href="${downloadUrl}" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm font-medium underline whitespace-nowrap">
+              Скачать
+            </a>
+          `;
+        }
+      });
     }
 
     function unlockNextChapter(currentChapterElement) {
