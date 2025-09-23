@@ -194,3 +194,19 @@ class UserVideoProgress(models.Model):
     
     def __str__(self):
         return f"{self.user.email} - {self.video.title} - {'Просмотрено' if self.is_watched else 'Не просмотрено'}"
+
+
+class UserChapterProgress(models.Model):
+    """Model to track user's chapter completion progress"""
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Пользователь")
+    chapter = models.ForeignKey(CourseChapterForOrderedUser, on_delete=models.CASCADE, verbose_name="Глава")
+    is_completed = models.BooleanField(default=False, verbose_name="Завершена")
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name="Дата завершения")
+    
+    class Meta:
+        verbose_name = "Прогресс прохождения главы"
+        verbose_name_plural = "6. Прогресс прохождения глав"
+        unique_together = ['user', 'chapter']  # One progress record per user per chapter
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.chapter.title} - {'Завершена' if self.is_completed else 'В процессе'}"

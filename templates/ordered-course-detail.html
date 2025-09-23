@@ -79,6 +79,14 @@
           </div>
         </div>
 
+        <!-- Course Description - Full Width -->
+        <div class="mb-8" data-aos="fade-up" data-aos-delay="400">
+          <h3 class="text-2xl font-bold text-white mb-4">Описание курса</h3>
+          <p class="text-white/70 leading-relaxed text-justify">
+            {{ course.description }}
+          </p>
+        </div>
+
         <!-- Access Status -->
         <div class="mb-8" data-aos="fade-up" data-aos-delay="500">
           {% if is_enrolled %}
@@ -157,9 +165,6 @@
           </div>
         {% endif %}
 
-        <p class="text-white/50 font-medium">
-          {{ course.description }}
-        </p>
         <br>
         <div class="whitespace-nowrap flex max-sm:flex-col sm:items-center gap-3 lg:gap-6" data-aos="fade-up" data-aos-delay="600">
           <a href="{% url 'courses:my_courses' %}"
@@ -186,17 +191,42 @@
             <div x-data="{ open: false }" class="bg-white/5 border-2 border-white/30 rounded-2xl overflow-hidden" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:700 }}">
               <!-- Chapter Header -->
               <button @click="open = !open" 
-                class="w-full flex items-center justify-between p-4 lg:p-6 hover:bg-white/5 transition-colors">
+                class="w-full flex items-center justify-between p-4 lg:p-6 hover:bg-white/5 transition-colors"
+                {% if not chapter.is_accessible %}disabled{% endif %}>
                 <div class="flex items-center gap-4">
                   <span class="text-white/50 font-medium text-sm">{{ forloop.counter|stringformat:"02d" }}</span>
-                  <h4 class="text-white font-semibold text-lg lg:text-xl">{{ chapter.title }}</h4>
+                  <h4 class="text-white font-semibold text-lg lg:text-xl {% if not chapter.is_accessible %}opacity-50{% endif %}">{{ chapter.title }}</h4>
+                  {% if chapter.is_completed %}
+                    <span class="text-green-400 ml-2 flex items-center gap-1">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                      <span class="text-sm font-medium">Завершено</span>
+                    </span>
+                  {% elif not chapter.is_accessible %}
+                    <span class="text-red-400 ml-2 flex items-center gap-1">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                      </svg>
+                      <span class="text-sm font-medium">Заблокировано</span>
+                    </span>
+                  {% else %}
+                    <span class="text-blue-400 ml-2 flex items-center gap-1">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                      </svg>
+                      <span class="text-sm font-medium">В процессе</span>
+                    </span>
+                  {% endif %}
                 </div>
-                <div class="p-2">
-                  <svg :class="open ? 'rotate-45' : ''" class="transition-all duration-500 ease-in-out text-white/70" width="20" height="20"
-                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z" fill="currentColor" />
-                  </svg>
-                </div>
+                {% if chapter.is_accessible %}
+                  <div class="p-2">
+                    <svg :class="open ? 'rotate-45' : ''" class="transition-all duration-500 ease-in-out text-white/70" width="20" height="20"
+                      viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z" fill="currentColor" />
+                    </svg>
+                  </div>
+                {% endif %}
               </button>
 
               <!-- Chapter Content -->
@@ -211,7 +241,7 @@
                 <div class="space-y-4">
                   <!-- Videos Section -->
                   {% for video in chapter.coursevideoforordereduser_set.all %}
-                    <div class="p-3 bg-white/5 border border-white/10 rounded-lg transition-all duration-300 hover:bg-white/10">
+                    <div class="p-3 bg-white/5 border border-white/10 rounded-lg transition-all duration-300 hover:bg-white/10" data-video-id="{{ video.id }}">
                       <div class="flex items-center gap-3 mb-3">
                         <div class="w-8 h-10 bg-gradient-display rounded-full flex items-center justify-center flex-shrink-0">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -219,34 +249,52 @@
                           </svg>
                         </div>
                         <div class="flex-1 min-w-0">
-                          <p class="text-white font-medium break-words">{{ video.title }}</p>
+                            <div class="flex items-center gap-2 video-title">
+                              <p class="text-white font-medium break-words">{{ video.title }}</p>
+                              {% load order_tags %}
+                              {% is_video_watched video.id user as video_watched %}
+                              {% if video_watched %}
+                              <span class="text-green-400 flex items-center gap-1 watched-indicator">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-xs font-medium">Просмотрено</span>
+                              </span>
+                            {% endif %}
+                          </div>
                           {% if video.description %}
                             <p class="text-white/50 text-sm break-words mt-1">{{ video.description|truncatewords:15 }}</p>
                           {% endif %}
                         </div>
                       </div>
-                      <div class="flex items-center justify-between">
-                        <span class="text-white/50 text-sm">{{ video.video_time }}</span>
-                        {% if video.is_accessible %}
-                          <div class="flex items-center gap-3">
-                            {% if video.is_watched %}
-                              <span class="text-green-400 text-sm font-medium flex items-center gap-3" style="font-size: 20px; color: #22c55e;">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="font-size: 20px; color: #22c55e;">
-                                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        <div class="flex items-center justify-between">
+                          <span class="text-white/50 text-sm">{{ video.video_time }}</span>
+                          {% if video.is_accessible %}
+                            <div class="flex items-center gap-3">
+                              {% if video.is_watched %}
+                                <span class="text-green-400 text-sm font-medium flex items-center gap-1">
+                                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                  </svg>
+                                  Просмотрено
+                                </span>
+                              {% endif %}
+                              <button onclick="openVideoModal('{{ video.get_file_url }}', '{{ video.title|escapejs }}', {{ video.id }})" class="text-blue-400 hover:text-blue-300 text-sm font-medium underline whitespace-nowrap flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
                                 </svg>
-                                Просмотрено
-                              </span>
-                            {% endif %}
-                            <button onclick="openVideoModal('{{ video.get_file_url }}', '{{ video.title|escapejs }}', {{ video.id }})" class="text-blue-400 hover:text-blue-300 text-sm font-medium underline whitespace-nowrap">
-                              Смотреть
-                            </button>
-                          </div>
-                        {% else %}
-                          <div class="flex items-center gap-1 text-red-400">
-                            <span class="text-sm">Нет доступа</span>
-                          </div>
-                        {% endif %}
-                      </div>
+                                Смотреть
+                              </button>
+                            </div>
+                          {% else %}
+                            <div class="flex items-center gap-1 text-red-400">
+                              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                              </svg>
+                              <span class="text-sm">Заблокировано</span>
+                            </div>
+                          {% endif %}
+                        </div>
                     </div>
                   {% endfor %}
 
@@ -283,7 +331,10 @@
                             </a>
                           {% else %}
                             <div class="flex items-center gap-1 text-red-400">
-                              <span class="text-sm">Нет доступа</span>
+                              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                              </svg>
+                              <span class="text-sm">Завершите главу</span>
                             </div>
                           {% endif %}
                         </div>
@@ -298,6 +349,28 @@
               </div>
             </div>
           {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Test Button - Show when all chapters are completed -->
+    {% if not quiz_attempt %}
+      <div class="mb-8 md:mb-12 lg:mb-16" data-aos="fade-up" data-aos-delay="800" data-test-button style="display: {% if all_chapters_completed %}block{% else %}none{% endif %};">
+        <div class="bg-gradient-to-r from-green-500/20 to-blue-500/20 border-2 border-green-400/30 rounded-2xl p-8 text-center">
+          <div class="flex items-center justify-center mb-4">
+            <svg class="w-12 h-12 text-green-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="text-2xl font-bold text-green-400">Поздравляем!</h3>
+          </div>
+          <p class="text-green-300 mb-6 text-lg">Вы завершили все главы курса. Теперь можете пройти финальный тест.</p>
+          <a href="{% url 'courses:start_quiz' course.id %}" 
+             class="inline-flex items-center bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-8 py-4 text-lg transition-all duration-300">
+            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Пройти тест
+          </a>
         </div>
       </div>
     {% endif %}
@@ -430,7 +503,7 @@
       if (videoPlayer.duration > 0) {
         const watchedPercentage = (videoPlayer.currentTime / videoPlayer.duration) * 100;
         // Mark as watched if user watched more than 80% of the video
-        if (watchedPercentage >= 80 && !hasMarkedAsWatched) {
+        if (watchedPercentage >= 95 && !hasMarkedAsWatched) {
           markVideoAsWatched();
         }
       }
@@ -465,10 +538,8 @@
           console.log('Video marked as watched:', data);
           // Show success message
           showNotification('Видео отмечено как просмотренное!', 'success');
-          // Refresh the page to show the "Просмотрено" indicator
-          setTimeout(() => {
-            location.reload();
-          }, 1500);
+          // Update UI without reload
+          updateVideoStatus(currentVideoId);
         } else {
           console.error('Error marking video as watched:', data.message);
           showNotification('Ошибка при отметке видео', 'error');
@@ -478,6 +549,148 @@
         console.error('Error:', error);
         showNotification('Ошибка при отметке видео', 'error');
       });
+    }
+
+    function updateVideoStatus(videoId) {
+      // Find the video element and add watched indicator
+      const videoElement = document.querySelector(`[data-video-id="${videoId}"]`);
+      if (videoElement) {
+        const titleElement = videoElement.querySelector('.video-title');
+        if (titleElement && !titleElement.querySelector('.watched-indicator')) {
+          const watchedIndicator = document.createElement('span');
+          watchedIndicator.className = 'text-green-400 flex items-center gap-1 watched-indicator';
+          watchedIndicator.innerHTML = `
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-xs font-medium">Просмотрено</span>
+          `;
+          titleElement.appendChild(watchedIndicator);
+        }
+      }
+      
+      // Update chapter status
+      updateChapterStatus(videoId);
+    }
+
+    function updateChapterStatus(videoId) {
+      // Find the current chapter
+      const videoElement = document.querySelector(`[data-video-id="${videoId}"]`);
+      if (!videoElement) return;
+      
+      const chapterElement = videoElement.closest('[x-data]');
+      if (!chapterElement) return;
+      
+      // Check if all videos in this chapter are watched
+      const allVideos = chapterElement.querySelectorAll('[data-video-id]');
+      let allWatched = true;
+      
+      allVideos.forEach(video => {
+        if (!video.querySelector('.watched-indicator')) {
+          allWatched = false;
+        }
+      });
+      
+      if (allWatched) {
+        // Update chapter status to completed
+        const chapterHeader = chapterElement.querySelector('button');
+        if (chapterHeader) {
+          const statusElement = chapterHeader.querySelector('.text-blue-400, .text-red-400, .text-green-400');
+          if (statusElement) {
+            statusElement.className = 'text-green-400 ml-2 flex items-center gap-1';
+            statusElement.innerHTML = `
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-sm font-medium">Завершено</span>
+            `;
+          }
+        }
+        
+        // Unlock next chapter
+        unlockNextChapter(chapterElement);
+        
+        // Check if all chapters are completed and show test button
+        checkAllChaptersCompleted();
+      }
+    }
+
+    function unlockNextChapter(currentChapterElement) {
+      // Find the next chapter
+      const allChapters = document.querySelectorAll('[x-data]');
+      let currentIndex = -1;
+      
+      allChapters.forEach((chapter, index) => {
+        if (chapter === currentChapterElement) {
+          currentIndex = index;
+        }
+      });
+      
+      if (currentIndex >= 0 && currentIndex < allChapters.length - 1) {
+        const nextChapter = allChapters[currentIndex + 1];
+        const nextChapterHeader = nextChapter.querySelector('button');
+        
+        if (nextChapterHeader) {
+          // Remove disabled attribute
+          nextChapterHeader.removeAttribute('disabled');
+          
+          // Update status to "В процессе"
+          const statusElement = nextChapterHeader.querySelector('.text-red-400');
+          if (statusElement) {
+            statusElement.className = 'text-blue-400 ml-2 flex items-center gap-1';
+            statusElement.innerHTML = `
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-sm font-medium">В процессе</span>
+            `;
+          }
+          
+          // Add expand/collapse button
+          const expandButton = nextChapterHeader.querySelector('.p-2');
+          if (!expandButton) {
+            const expandDiv = document.createElement('div');
+            expandDiv.className = 'p-2';
+            expandDiv.innerHTML = `
+              <svg :class="open ? 'rotate-45' : ''" class="transition-all duration-500 ease-in-out text-white/70" width="20" height="20"
+                viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.58325 8.5835V0.0834961H11.4166V8.5835H19.9166V11.4168H11.4166V19.9168H8.58325V11.4168H0.083252V8.5835H8.58325Z" fill="currentColor" />
+              </svg>
+            `;
+            nextChapterHeader.appendChild(expandDiv);
+          }
+          
+          // Update chapter title opacity
+          const titleElement = nextChapterHeader.querySelector('h4');
+          if (titleElement) {
+            titleElement.classList.remove('opacity-50');
+          }
+        }
+      }
+    }
+
+    function checkAllChaptersCompleted() {
+      // Check if all chapters are completed
+      const allChapters = document.querySelectorAll('[x-data]');
+      let allCompleted = true;
+      
+      allChapters.forEach(chapter => {
+        const statusElement = chapter.querySelector('.text-green-400');
+        if (!statusElement || !statusElement.textContent.includes('Завершено')) {
+          allCompleted = false;
+        }
+      });
+      
+      // Show or hide test button based on completion status
+      const testButtonSection = document.querySelector('[data-test-button]');
+      if (testButtonSection) {
+        if (allCompleted) {
+          testButtonSection.style.display = 'block';
+          testButtonSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          testButtonSection.style.display = 'none';
+        }
+      }
     }
 
     function showNotification(message, type = 'info') {

@@ -14,10 +14,17 @@
                 {% else %}
                     <img src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}" class="w-full h-64 object-cover rounded-lg">
                 {% endif %}
+                
+                <!-- Course Description -->
+                <div class="mt-4">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Описание курса</h3>
+                    <p class="text-gray-600 leading-relaxed text-justify">
+                        {{ course.description }}
+                    </p>
+                </div>
             </div>
             <div class="md:w-2/3" data-aos="fade-left" data-aos-delay="200">
                 <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ course.name }}</h1>
-                <p class="text-gray-600 mb-4">{{ course.description }}</p>
                 <div class="flex items-center gap-4 mb-4">
                     <span class="text-sm text-gray-500">Автор: <strong>{{ course.author }}</strong></span>
                     <span class="text-sm text-gray-500">Категория: <strong>{{ course.category.name }}</strong></span>

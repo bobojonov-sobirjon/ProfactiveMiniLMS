@@ -44,6 +44,7 @@
                 <img class="w-full h-auto object-cover rounded-3xl" src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
               {% endif %}
             </div>
+            
           </div>
 
           
@@ -83,6 +84,14 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Course Description - Full Width -->
+        <div class="mb-8" data-aos="fade-up" data-aos-delay="400">
+          <h3 class="text-2xl font-bold text-white mb-4">Описание курса</h3>
+          <p class="text-white/70 leading-relaxed text-justify">
+            {{ course.description }}
+          </p>
         </div>
 
         <!-- Course Chapters with Expandable Content -->
@@ -237,9 +246,6 @@
           </div>
         </div>
 
-        <p class="text-white/50 font-medium">
-          {{ course.description }}
-        </p>
         
         {% if user.is_authenticated %}
           {% if is_enrolled %}
@@ -248,10 +254,6 @@
               Перейти к моим курсам
             </a>
           {% else %}
-            <a href="#" onclick="openAccessModal(); return false;"
-              class="font-medium text-white/50 underline-offset-2 underline hover-opacity-75 block mb-6 md:mb-9 lg:mb-13.5">
-              Получить доступ к курсу
-            </a>
           {% endif %}
         {% else %}
           <a href="{% url 'login' %}"
@@ -276,7 +278,7 @@
             {% else %}
               <button onclick="openAccessModal()"
                 class="w-fit font-semibold border-gradient-rounded-14 rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
-                Получить доступ
+                Купить курс
               </button>
             {% endif %}
           {% else %}
@@ -423,7 +425,7 @@
     <div class="relative w-full max-w-156 mx-4">
       <div class="bg-white rounded-3xl overflow-hidden p-5 md:p-8 lg:p-11">
         <h2 class="font-bold text-primary text-center text-basic-23 md:text-3xl lg:text-basic-40/13.5 mb-5 md:mb-8 lg:mb-11">
-          Получить доступ
+          Купить курс
         </h2>
 
         <form id="accessForm" class="space-y-4 md:space-y-6">
@@ -468,7 +470,7 @@
         <div class="text-center">
             <button type="submit" 
               class="bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-8 py-3 lg:py-4 text-lg">
-              Получить доступ
+              Купить курс
             </button>
           </div>
         </form>

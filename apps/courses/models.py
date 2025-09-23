@@ -13,7 +13,7 @@ class Categories(models.Model):
 
     class Meta:
         verbose_name = "Категория"
-        verbose_name_plural = "1. Категории"
+        verbose_name_plural = "01. Категории"
         ordering = ['name']
 
     def __str__(self):
@@ -41,7 +41,7 @@ class MainCategory(Categories):
     class Meta:
         proxy = True
         verbose_name = "Основная категория"
-        verbose_name_plural = "1. Основные категории"
+        verbose_name_plural = "01. Основные категории"
 
 
 class SubCategory(Categories):
@@ -49,7 +49,7 @@ class SubCategory(Categories):
     class Meta:
         proxy = True
         verbose_name = "Подкатегория"
-        verbose_name_plural = "2. Подкатегории"
+        verbose_name_plural = "02. Подкатегории"
 
 
 class Courses(models.Model):
@@ -64,7 +64,7 @@ class Courses(models.Model):
 
     class Meta:
         verbose_name = "Курс"
-        verbose_name_plural = "3. Курсы"
+        verbose_name_plural = "03. Курсы"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -81,7 +81,7 @@ class CourseChapter(models.Model):
 
     class Meta:
         verbose_name = "Глава курса"
-        verbose_name_plural = "4. Главы курсов"
+        verbose_name_plural = "04. Главы курсов"
         ordering = ['order']
 
     def __str__(self):
@@ -109,7 +109,7 @@ class CourseChapterVideo(models.Model):
 
     class Meta:
         verbose_name = "Видео главы"
-        verbose_name_plural = "5. Видео глав"
+        verbose_name_plural = "05. Видео глав"
         ordering = ['order']
 
     def __str__(self):
@@ -156,7 +156,7 @@ class CourseChapterMaterials(models.Model):
 
     class Meta:
         verbose_name = "Материал главы"
-        verbose_name_plural = "6. Материалы глав"
+        verbose_name_plural = "06. Материалы глав"
         ordering = ['order']
 
     def __str__(self):
@@ -216,7 +216,7 @@ class CourseReview(models.Model):
 
     class Meta:
         verbose_name = "Отзыв о курсе"
-        verbose_name_plural = "7. Отзывы о курсах"
+        verbose_name_plural = "07. Отзывы о курсах"
         ordering = ['-created_at']
         unique_together = ['course', 'first_name', 'last_name']
 
@@ -238,7 +238,7 @@ class CourseQuiz(models.Model):
 
     class Meta:
         verbose_name = "Тест курса"
-        verbose_name_plural = "Тесты курсов"
+        verbose_name_plural = "08. Тесты курсов"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -270,7 +270,7 @@ class QuizQuestion(models.Model):
 
     class Meta:
         verbose_name = "Вопрос теста"
-        verbose_name_plural = "Вопросы тестов"
+        verbose_name_plural = "09. Вопросы тестов"
         ordering = ['created_at']
 
     def __str__(self):
@@ -292,7 +292,7 @@ class QuizAttempt(models.Model):
 
     class Meta:
         verbose_name = "Попытка прохождения теста"
-        verbose_name_plural = "Попытки прохождения тестов"
+        verbose_name_plural = "10. Попытки прохождения тестов"
         ordering = ['-started_at']
         # Removed unique_together to allow multiple attempts
 
@@ -334,7 +334,7 @@ class QuizCertificate(models.Model):
 
     class Meta:
         verbose_name = "Сертификат теста"
-        verbose_name_plural = "Сертификаты тестов"
+        verbose_name_plural = "11. Сертификаты тестов"
         ordering = ['-issued_at']
         unique_together = ['user', 'quiz']  # One certificate per user per quiz
 

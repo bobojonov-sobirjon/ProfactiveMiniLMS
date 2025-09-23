@@ -17,11 +17,9 @@
         </p>
       </div>
 
-      <!-- DEBUG: course_progress count = {{ course_progress|length }} -->
       {% if course_progress %}
         <div class="space-y-2 md:space-y-3 lg:space-y-6">
           {% for progress in course_progress %}
-            <!-- DEBUG: Processing course {{ progress.course.name }} -->
             <section class="mb-4 md:mb-6 lg:mb-12 pt-4 md:pt-6 lg:pt-8" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}" data-order-id="{{ progress.order.id }}">
               <div class="bg-white text-primary rounded-3xl p-4 md:p-7 lg:p-11">
                 <div class="flex max-md:flex-col justify-between gap-2 md:gap-3 lg:gap-5 max-md:mb-3 md:mb-4 lg:mb-5">
@@ -84,7 +82,7 @@
                     </p>
                     <div class="w-full max-w-111 h-4.5 bg-primary/20 rounded-full">
                       <div class="h-full bg-gradient-display rounded-full progress-bar transition-all duration-500" 
-                           style="width: {{ progress.progress_percentage }}%"></div>
+                           style="width: {{ progress.progress_percentage }}%; min-width: 0;"></div>
                     </div>
                     <p class="text-primary/50 font-medium text-xs md:text-sm lg:text-base leading-none">
                       <span class="watched-videos">{{ progress.watched_videos }}</span>/<span class="total-videos">{{ progress.total_videos }}</span> видео, {{ progress.total_videos }} часов, {{ progress.total_videos }} академических часов

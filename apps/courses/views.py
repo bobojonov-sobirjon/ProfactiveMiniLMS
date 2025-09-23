@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 from .models import Courses, CourseChapter, CourseChapterVideo, CourseChapterMaterials, Categories, CourseReview, CourseQuiz, QuizQuestion, QuizAttempt, QuizCertificate
 from apps.website.models import DiscountForReferral
-from apps.order.models import CourseOrder, CourseChapterForOrderedUser, CourseVideoForOrderedUser, CourseMaterialForOrderedUser, UserVideoProgress
+from apps.order.models import CourseOrder, CourseChapterForOrderedUser, CourseVideoForOrderedUser, CourseMaterialForOrderedUser, UserVideoProgress, UserChapterProgress
 
 
 def course_detail(request, course_id):
@@ -563,14 +563,55 @@ def ordered_course_detail(request, order_id):
                 'coursematerialforordereduser_set'
             ).order_by('chapter_order')
     
-    # Add watched status to each video
-    for chapter in chapters:
-        for video in chapter.coursevideoforordereduser_set.all():
-            video.is_watched = UserVideoProgress.objects.filter(
+    # Add progressive access logic and video watched status
+    chapters_list = list(chapters)
+    
+    # Get all user video progress for this user
+    user_video_progress = UserVideoProgress.objects.filter(
+        user=request.user,
+        is_watched=True
+    ).values_list('video_id', flat=True)
+    
+    for i, chapter in enumerate(chapters_list):
+        # Check chapter accessibility
+        if i == 0:
+            # First chapter is always accessible
+            chapter.is_accessible = True
+        else:
+            # Subsequent chapters are accessible only if previous chapter is completed
+            previous_chapter = chapters_list[i - 1]
+            previous_progress = UserChapterProgress.objects.filter(
                 user=request.user,
-                video=video,
-                is_watched=True
+                chapter=previous_chapter,
+                is_completed=True
             ).exists()
+            chapter.is_accessible = previous_progress
+        
+        # Get videos with progressive access
+        videos = chapter.coursevideoforordereduser_set.all().order_by('video_order')
+        videos_list = list(videos)
+        
+        for j, video in enumerate(videos_list):
+            if j == 0:
+                # First video in chapter is accessible if chapter is accessible
+                video.is_accessible = chapter.is_accessible
+            else:
+                # Subsequent videos are accessible only if previous video is watched AND chapter is accessible
+                previous_video = videos_list[j-1]
+                previous_watched = previous_video.id in user_video_progress
+                video.is_accessible = previous_watched and chapter.is_accessible
+            
+            # Check if video is watched
+            video.is_watched = video.id in user_video_progress
+        
+        # Check if chapter is completed
+        total_videos = videos.count()
+        watched_videos = sum(1 for video in videos_list if video.id in user_video_progress)
+        chapter.is_completed = total_videos > 0 and watched_videos == total_videos
+        
+        # Materials are accessible only if chapter is completed
+        for material in chapter.coursematerialforordereduser_set.all():
+            material.is_accessible = chapter.is_completed
     
     # Calculate total lessons and duration
     total_lessons = sum(
@@ -587,6 +628,9 @@ def ordered_course_detail(request, order_id):
     
     total_duration_hours = int(total_duration_seconds // 3600)
     total_duration_minutes = int((total_duration_seconds % 3600) // 60)
+    
+    # Check if all chapters are completed
+    all_chapters_completed = all(chapter.is_completed for chapter in chapters_list)
     
     # Get quiz information
     quiz_attempt = None
@@ -611,6 +655,7 @@ def ordered_course_detail(request, order_id):
         'is_enrolled': order.is_active,  # Access based on order status
         'quiz_attempt': quiz_attempt,
         'quiz_certificate': quiz_certificate,
+        'all_chapters_completed': all_chapters_completed,
     }
     return render(request, 'ordered-course-detail.html', context)
 
@@ -621,18 +666,12 @@ def course_results(request):
     # Get all active orders for the user
     orders = CourseOrder.objects.filter(user=request.user, is_active=True).select_related('course')
     
-    print(f"DEBUG: Found {orders.count()} active orders for user {request.user.email}")
-    
     course_progress = []
     
     for order in orders:
-        print(f"DEBUG: Processing order {order.id} for course {order.course.name}")
-        
         # Get all videos for this order
         videos = CourseVideoForOrderedUser.objects.filter(order=order, is_accessible=True)
         total_videos = videos.count()
-        
-        print(f"DEBUG: Found {total_videos} accessible videos for order {order.id}")
         
         # Count watched videos from progress tracking
         watched_videos = UserVideoProgress.objects.filter(
@@ -641,7 +680,14 @@ def course_results(request):
             is_watched=True
         ).count()
         
-        progress_percentage = (watched_videos / total_videos * 100) if total_videos > 0 else 0
+        # Calculate progress percentage - ensure it's 0 when no videos watched
+        if total_videos > 0:
+            progress_percentage = (watched_videos / total_videos * 100)
+        else:
+            progress_percentage = 0
+        
+        # Ensure progress is never negative and never exceeds 100
+        progress_percentage = max(0, min(100, progress_percentage))
         
         # Get quiz information
         quiz_attempt = None
@@ -666,9 +712,6 @@ def course_results(request):
         }
         
         course_progress.append(course_data)
-        print(f"DEBUG: Added course {order.course.name} with {progress_percentage}% progress")
-    
-    print(f"DEBUG: Total course_progress items: {len(course_progress)}")
     
     context = {
         'course_progress': course_progress
@@ -705,6 +748,29 @@ def mark_video_watched(request):
             if not created:
                 progress.is_watched = True
                 progress.save()
+            
+            # Check if chapter is now completed and update progress
+            chapter = video.chapter
+            if chapter:
+                total_videos_in_chapter = CourseVideoForOrderedUser.objects.filter(chapter=chapter).count()
+                watched_videos_in_chapter = UserVideoProgress.objects.filter(
+                    user=request.user,
+                    video__chapter=chapter,
+                    is_watched=True
+                ).count()
+                
+                chapter_completed = total_videos_in_chapter > 0 and watched_videos_in_chapter == total_videos_in_chapter
+                
+                if chapter_completed:
+                    chapter_progress, created = UserChapterProgress.objects.get_or_create(
+                        user=request.user,
+                        chapter=chapter,
+                        defaults={'is_completed': True, 'completed_at': timezone.now()}
+                    )
+                    if not created and not chapter_progress.is_completed:
+                        chapter_progress.is_completed = True
+                        chapter_progress.completed_at = timezone.now()
+                        chapter_progress.save()
             
             # Calculate new progress
             order = video.order
