@@ -15,7 +15,7 @@
 
           {% if main_header %}
             <h1 class="font-bold text-2xl md:text-basic-40 lg:text-[53px]/[64px] mb-11 lg:mb-13.5">
-              {{ main_header.title|safe }}
+              {{ main_header.get_highlighted_title|safe }}
             </h1>
 
             <a href="{% url 'referal' %}"
