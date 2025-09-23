@@ -609,9 +609,11 @@ def ordered_course_detail(request, order_id):
         watched_videos = sum(1 for video in videos_list if video.id in user_video_progress)
         chapter.is_completed = total_videos > 0 and watched_videos == total_videos
         
-        # Materials are accessible only if chapter is completed
+        # Materials are accessible if chapter is accessible and at least one video is watched
         for material in chapter.coursematerialforordereduser_set.all():
-            material.is_accessible = chapter.is_completed
+            # Material is accessible if chapter is accessible and at least one video is watched
+            has_watched_video = any(video.id in user_video_progress for video in videos_list)
+            material.is_accessible = chapter.is_accessible and has_watched_video
     
     # Calculate total lessons and duration
     total_lessons = sum(
