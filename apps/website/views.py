@@ -154,12 +154,8 @@ def referal_request(request):
                     'message': 'Все поля обязательны для заполнения'
                 })
             
-            # Check if email already exists
-            if ReferralRequest.objects.filter(email=email).exists():
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Заявка с таким email уже существует'
-                })
+            # Allow multiple referrals from the same email
+            # No need to check for existing email
             
             # Create referral request
             referral = ReferralRequest.objects.create(
