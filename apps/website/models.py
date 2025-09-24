@@ -246,10 +246,20 @@ class ReferralRequest(models.Model):
 
     def generate_promo_code(self):
         """Generate unique promo code"""
-        while True:
-            code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
-            if not ReferralRequest.objects.filter(promo_code=code).exists():
-                return code
+        import time
+        # Add timestamp to make codes more unique and distinguishable
+        timestamp = str(int(time.time()))[-4:]  # Last 4 digits of timestamp
+        base_code = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(4))
+        code = f"{base_code}{timestamp}"
+        
+        # Ensure uniqueness
+        counter = 1
+        original_code = code
+        while ReferralRequest.objects.filter(promo_code=code).exists():
+            code = f"{original_code}{counter}"
+            counter += 1
+            
+        return code
 
     def generate_referral_link(self):
         """Generate unique referral link"""

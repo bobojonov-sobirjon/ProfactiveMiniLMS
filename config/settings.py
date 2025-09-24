@@ -163,7 +163,7 @@ EMAIL_HOST_PASSWORD = 'harntaefuxuvlqqw'  # Change to your app password
 DEFAULT_FROM_EMAIL = 'sobirbobojonov2000@gmail.com'  # Change to your email
 
 # Site URL for email links
-SITE_URL = 'http://127.0.0.1:9000'
+SITE_URL = 'http://31.128.43.149:8001/'
 
 # Login/Logout URLs
 LOGIN_URL = '/accounts/login/'

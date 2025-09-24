@@ -199,7 +199,7 @@ def referal_request(request):
             
             return JsonResponse({
                 'success': True,
-                'message': 'Реферальная ссылка отправлена на ваш email'
+                'message': 'Новая реферальная ссылка отправлена на ваш email. Вы можете создавать несколько реферальных ссылок.'
             })
             
         except Exception as e:
