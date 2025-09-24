@@ -155,12 +155,14 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Change to your SMTP server
+EMAIL_HOST = 'smtp.yandex.com'  # Yandex SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sobirbobojonov2000@gmail.com'  # Change to your email
-EMAIL_HOST_PASSWORD = 'harntaefuxuvlqqw'  # Change to your app password
-DEFAULT_FROM_EMAIL = 'sobirbobojonov2000@gmail.com'  # Change to your email
+EMAIL_USE_SSL = False  # TLS is used, not SSL
+EMAIL_HOST_USER = 'milova.daria99@yandex.ru'  # Your Yandex email
+EMAIL_HOST_PASSWORD = 'YOUR_YANDEX_APP_PASSWORD'  # Yandex App Password (NOT regular password)
+DEFAULT_FROM_EMAIL = 'milova.daria99@yandex.ru'  # Your Yandex email
+EMAIL_TIMEOUT = 30  # Timeout for email sending
 
 # Site URL for email links
 SITE_URL = 'http://31.128.43.149:8001'
