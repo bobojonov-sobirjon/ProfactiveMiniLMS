@@ -446,6 +446,12 @@ class MainHeader(models.Model):
         verbose_name="Изображение",
         help_text="Изображение для главного заголовка"
     )
+    image_banner_video = models.ImageField(
+        upload_to='main_header/',
+        verbose_name="Изображение для баннера видео",
+        help_text="Изображение для баннера видео"
+    )
+    
     video = models.FileField(
         upload_to='main_header/videos/',
         verbose_name="Видео",

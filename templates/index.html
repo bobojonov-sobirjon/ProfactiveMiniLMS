@@ -194,8 +194,8 @@
 
         <!-- Video Play -->
         <div class="relative aspect-square md:aspect-[1200/544] max-h-136 overflow-hidden rounded-3xl" data-aos="zoom-in" data-aos-delay="200">
-          {% if main_header and main_header.image %}
-            <img class="relative z-0 size-full object-cover" src="{{ main_header.image.url }}" alt="{{ main_header.title }}">
+          {% if main_header and main_header.image_banner_video %}
+            <img class="relative z-0 size-full object-cover" src="{{ main_header.image_banner_video.url }}" alt="{{ main_header.title }}">
           {% else %}
             <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/popular-2.jpg' %}" alt="Img">
           {% endif %}

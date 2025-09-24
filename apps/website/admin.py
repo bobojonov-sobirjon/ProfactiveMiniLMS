@@ -203,7 +203,7 @@ class MainHeaderAdmin(admin.ModelAdmin):
             'fields': ('title', 'keywords')
         }),
         ('Медиа файлы', {
-            'fields': ('image', 'video')
+            'fields': ('image', 'image_banner_video', 'video')
         }),
         ('Политика конфиденциальности', {
             'fields': ('privacy_policy_file',)

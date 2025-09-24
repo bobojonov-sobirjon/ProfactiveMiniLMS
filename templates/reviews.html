@@ -19,26 +19,65 @@
       <div x-data="showMore(6)">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center mx-auto max-w-200 lg:max-w-300 gap-5 md:gap-8 lg:gap-11 mb-13.5">
           {% for review in page_obj %}
-          <div class="bg-white lg:max-w-92 rounded-3xl p-4 md:p-6 w-full">
-            <div class="flex items-center gap-3 md:gap-6 mb-6">
-              <img class="max-w-20 lg:max-w-24.5" src="{% static 'assets/images/reviews-img.png' %}" alt="images">
-              <div class="">
-                <h4 class="text-xl lg:text-[22px] mb-1 text-brand-gray-600/90">{{ review.first_name }} {{ review.last_name }}</h4>
+          <div class="bg-gray-50 rounded-2xl p-6 w-full shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-200">
+            <!-- Header with user info and options -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-3">
+                <!-- User avatar placeholder (no image) -->
+                {% if review.first_name and review.last_name %}
+                {{ review.first_name|first }}{{ review.last_name|first }}
+              {% else %}
+                A
+              {% endif %}
+                <div>
+                  <h4 class="font-semibold text-gray-900 text-base">
+                    {% if review.first_name or review.last_name %}
+                      {{ review.first_name }} {{ review.last_name }}
+                    {% else %}
+                      Анонимный пользователь
+                    {% endif %}
+                  </h4>
+                  <p class="text-sm text-gray-500">{{ review.created_at|timesince }} назад</p>
+                </div>
+              </div>
+              <!-- Options menu -->
+              <div class="flex items-center space-x-2">
+                <!-- Rating stars -->
                 <div class="flex text-yellow-400">
                   {% for i in "12345" %}
                     {% if forloop.counter <= review.rating %}
-                      <span class="text-lg" style="color: #FFD700;">★</span>
+                      <span class="text-sm" style="color: #FFD700;">★</span>
                     {% else %}
-                      <span class="text-lg text-gray-300" style="color: #FFD700;">★</span>
+                      <span class="text-sm text-gray-300">★</span>
                     {% endif %}
                   {% endfor %}
                 </div>
               </div>
             </div>
-            <p class="text-brand-gray-600/50 font-medium">{{ review.comment }}</p>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <p class="text-sm text-brand-gray-600/70">{{ review.course.name }}</p>
-              <p class="text-xs text-brand-gray-600/50">{{ review.created_at|date:"d.m.Y" }}</p>
+            
+            <!-- Course name badge -->
+            <div class="mb-4">
+              <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                {{ review.course.name }}
+              </span>
+            </div>
+            
+            <!-- Review comment -->
+            <div class="mb-4">
+              <p class="text-gray-700 text-sm leading-relaxed">
+                {% if review.comment %}
+                  {{ review.comment }}
+                {% else %}
+                  Комментарий не предоставлен
+                {% endif %}
+              </p>
+            </div>
+            
+            <!-- Footer with rating -->
+            <div class="flex items-center justify-end pt-3 border-t border-gray-100">
+              <div class="text-xs text-gray-400">
+                {{ review.rating }}/5
+              </div>
             </div>
           </div>
           {% empty %}
