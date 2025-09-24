@@ -12,7 +12,7 @@ class Command(BaseCommand):
                 subject='Test Email',
                 message='This is a test email from Django.',
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=['sobirbobojonov2000@gmail.com'],
+                recipient_list=['sobirjon0518@yandex.ru'],
                 fail_silently=False,
             )
             self.stdout.write(
