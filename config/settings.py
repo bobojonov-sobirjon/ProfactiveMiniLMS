@@ -158,9 +158,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Change to your SMTP server
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sobirbobojonov2000@gmail.com'  # Change to your email
-EMAIL_HOST_PASSWORD = 'harntaefuxuvlqqw'  # Change to your app password
-DEFAULT_FROM_EMAIL = 'sobirbobojonov2000@gmail.com'  # Change to your email
+EMAIL_HOST_USER = 'daria.milova99@gmail.com'  # Change to your email
+EMAIL_HOST_PASSWORD = 'afeclddnbbzasvir'  # Change to your app password
+DEFAULT_FROM_EMAIL = 'daria.milova99@gmail.com'  # Change to your email
 
 # Site URL for email links
 SITE_URL = 'http://31.128.43.149:8001'
