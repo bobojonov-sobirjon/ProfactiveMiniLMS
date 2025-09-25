@@ -111,69 +111,70 @@
                 <h4 class="font-semibold text-primary mb-4">{{ question.question_text }}</h4>
                 
                 <div class="space-y-2">
-                  <div class="flex items-center p-3 rounded-lg {% if 'A' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'A' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                  <div class="flex items-center p-3 rounded-lg {% if 'A' == attempt.answers|get_item:question.id %}{% if 'A' == question.correct_answer %}bg-green-100 border-2 border-green-300{% else %}bg-red-100 border-2 border-red-300{% endif %}{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
                     <span class="font-medium mr-3">A.</span>
                     <span class="flex-1">{{ question.option_a }}</span>
-                    {% if 'A' == question.correct_answer %}
-                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                      </svg>
-                    {% elif 'A' == attempt.answers|get_item:question.id %}
-                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                      </svg>
+                    {% if 'A' == attempt.answers|get_item:question.id %}
+                      {% if 'A' == question.correct_answer %}
+                        <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% else %}
+                        <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% endif %}
                     {% endif %}
                   </div>
                   
-                  <div class="flex items-center p-3 rounded-lg {% if 'B' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'B' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                  <div class="flex items-center p-3 rounded-lg {% if 'B' == attempt.answers|get_item:question.id %}{% if 'B' == question.correct_answer %}bg-green-100 border-2 border-green-300{% else %}bg-red-100 border-2 border-red-300{% endif %}{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
                     <span class="font-medium mr-3">B.</span>
                     <span class="flex-1">{{ question.option_b }}</span>
-                    {% if 'B' == question.correct_answer %}
-                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                      </svg>
-                    {% elif 'B' == attempt.answers|get_item:question.id %}
-                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                      </svg>
+                    {% if 'B' == attempt.answers|get_item:question.id %}
+                      {% if 'B' == question.correct_answer %}
+                        <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% else %}
+                        <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% endif %}
                     {% endif %}
                   </div>
                   
-                  <div class="flex items-center p-3 rounded-lg {% if 'C' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'C' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                  <div class="flex items-center p-3 rounded-lg {% if 'C' == attempt.answers|get_item:question.id %}{% if 'C' == question.correct_answer %}bg-green-100 border-2 border-green-300{% else %}bg-red-100 border-2 border-red-300{% endif %}{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
                     <span class="font-medium mr-3">C.</span>
                     <span class="flex-1">{{ question.option_c }}</span>
-                    {% if 'C' == question.correct_answer %}
-                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                      </svg>
-                    {% elif 'C' == attempt.answers|get_item:question.id %}
-                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                      </svg>
+                    {% if 'C' == attempt.answers|get_item:question.id %}
+                      {% if 'C' == question.correct_answer %}
+                        <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% else %}
+                        <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% endif %}
                     {% endif %}
                   </div>
                   
-                  <div class="flex items-center p-3 rounded-lg {% if 'D' == question.correct_answer %}bg-green-100 border-2 border-green-300{% elif 'D' == attempt.answers|get_item:question.id %}bg-red-100 border-2 border-red-300{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
+                  <div class="flex items-center p-3 rounded-lg {% if 'D' == attempt.answers|get_item:question.id %}{% if 'D' == question.correct_answer %}bg-green-100 border-2 border-green-300{% else %}bg-red-100 border-2 border-red-300{% endif %}{% else %}bg-gray-50 border-2 border-gray-200{% endif %}">
                     <span class="font-medium mr-3">D.</span>
                     <span class="flex-1">{{ question.option_d }}</span>
-                    {% if 'D' == question.correct_answer %}
-                      <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                      </svg>
-                    {% elif 'D' == attempt.answers|get_item:question.id %}
-                      <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                      </svg>
+                    {% if 'D' == attempt.answers|get_item:question.id %}
+                      {% if 'D' == question.correct_answer %}
+                        <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% else %}
+                        <svg class="w-5 h-5 text-red-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                      {% endif %}
                     {% endif %}
                   </div>
                 </div>
-                
-                {% if question.explanation %}
-                  <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h5 class="font-semibold text-blue-800 mb-2">Объяснение:</h5>
-                    <p class="text-blue-700">{{ question.explanation }}</p>
-                  </div>
-                {% endif %}
               </div>
             </div>
           </div>
