@@ -634,6 +634,49 @@ def ordered_course_detail(request, order_id):
     # Check if all chapters are completed
     all_chapters_completed = all(chapter.is_completed for chapter in chapters_list)
     
+    # Calculate progress data for the progress card
+    # Get all videos for this order
+    all_videos = CourseVideoForOrderedUser.objects.filter(order=order, is_accessible=True)
+    total_videos = all_videos.count()
+    
+    # Count watched videos from progress tracking
+    watched_videos = UserVideoProgress.objects.filter(
+        user=request.user, 
+        video__in=all_videos, 
+        is_watched=True
+    ).count()
+    
+    # Check if course has a quiz
+    has_quiz = False
+    quiz_passed = False
+    try:
+        quiz = CourseQuiz.objects.get(course=order.course, is_active=True)
+        has_quiz = True
+        quiz_attempt = QuizAttempt.objects.filter(user=request.user, quiz=quiz).order_by('-started_at').first()
+        if quiz_attempt:
+            quiz_passed = quiz_attempt.is_passed
+    except CourseQuiz.DoesNotExist:
+        pass
+    
+    # Calculate progress percentage based on video completion and quiz status
+    if total_videos > 0:
+        video_progress = (watched_videos / total_videos * 100)
+        
+        if has_quiz:
+            # If course has quiz, max progress is 90% until quiz is passed
+            if quiz_passed:
+                progress_percentage = 100  # 100% only after passing quiz
+            else:
+                progress_percentage = min(90, video_progress)  # Max 90% for video completion
+        else:
+            # If no quiz, progress is based on video completion only
+            progress_percentage = video_progress
+    else:
+        progress_percentage = 0
+    
+    # Ensure progress is never negative and never exceeds 100
+    progress_percentage = max(0, min(100, progress_percentage))
+    
     # Get quiz information
     quiz_attempt = None
     quiz_certificate = None
@@ -658,6 +701,10 @@ def ordered_course_detail(request, order_id):
         'quiz_attempt': quiz_attempt,
         'quiz_certificate': quiz_certificate,
         'all_chapters_completed': all_chapters_completed,
+        # Progress data for the progress card
+        'total_videos': total_videos,
+        'watched_videos': watched_videos,
+        'progress_percentage': round(progress_percentage, 1),
     }
     return render(request, 'ordered-course-detail.html', context)
 
@@ -682,25 +729,37 @@ def course_results(request):
             is_watched=True
         ).count()
         
-        # Calculate progress percentage - ensure it's 0 when no videos watched
-        if total_videos > 0:
-            progress_percentage = (watched_videos / total_videos * 100)
-        else:
-            progress_percentage = 0
-        
-        # Ensure progress is never negative and never exceeds 100
-        progress_percentage = max(0, min(100, progress_percentage))
-        
-        # Get quiz information
+        # Get quiz information first
         quiz_attempt = None
         quiz_passed = False
+        has_quiz = False
         try:
             quiz = CourseQuiz.objects.get(course=order.course, is_active=True)
+            has_quiz = True
             quiz_attempt = QuizAttempt.objects.filter(user=request.user, quiz=quiz).order_by('-started_at').first()
             if quiz_attempt:
                 quiz_passed = quiz_attempt.is_passed
         except CourseQuiz.DoesNotExist:
             pass
+        
+        # Calculate progress percentage based on video completion and quiz status
+        if total_videos > 0:
+            video_progress = (watched_videos / total_videos * 100)
+            
+            if has_quiz:
+                # If course has quiz, max progress is 90% until quiz is passed
+                if quiz_passed:
+                    progress_percentage = 100  # 100% only after passing quiz
+                else:
+                    progress_percentage = min(90, video_progress)  # Max 90% for video completion
+            else:
+                # If no quiz, progress is based on video completion only
+                progress_percentage = video_progress
+        else:
+            progress_percentage = 0
+        
+        # Ensure progress is never negative and never exceeds 100
+        progress_percentage = max(0, min(100, progress_percentage))
         
         course_data = {
             'order': order,
@@ -784,7 +843,34 @@ def mark_video_watched(request):
             ).count()
             
             total_videos = all_videos.count()
-            progress_percentage = (watched_videos / total_videos * 100) if total_videos > 0 else 0
+            
+            # Check if course has a quiz and if it's passed
+            has_quiz = False
+            quiz_passed = False
+            try:
+                quiz = CourseQuiz.objects.get(course=order.course, is_active=True)
+                has_quiz = True
+                quiz_attempt = QuizAttempt.objects.filter(user=request.user, quiz=quiz).order_by('-started_at').first()
+                if quiz_attempt:
+                    quiz_passed = quiz_attempt.is_passed
+            except CourseQuiz.DoesNotExist:
+                pass
+            
+            # Calculate progress percentage based on video completion and quiz status
+            if total_videos > 0:
+                video_progress = (watched_videos / total_videos * 100)
+                
+                if has_quiz:
+                    # If course has quiz, max progress is 90% until quiz is passed
+                    if quiz_passed:
+                        progress_percentage = 100  # 100% only after passing quiz
+                    else:
+                        progress_percentage = min(90, video_progress)  # Max 90% for video completion
+                else:
+                    # If no quiz, progress is based on video completion only
+                    progress_percentage = video_progress
+            else:
+                progress_percentage = 0
             
             return JsonResponse({
                 'success': True,

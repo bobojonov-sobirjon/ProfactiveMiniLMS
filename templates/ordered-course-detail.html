@@ -111,72 +111,6 @@
             </div>
           {% endif %}
         </div>
-
-        <!-- Quiz Results Card -->
-        {% if quiz_attempt %}
-          <div class="mb-8" data-aos="fade-up" data-aos-delay="600">
-            <div class="bg-white text-primary rounded-3xl p-6">
-              <div class="flex items-center justify-between mb-4">
-                <h3 class="text-xl font-bold text-primary">Результаты теста</h3>
-                {% if quiz_attempt.is_passed %}
-                  <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                    Пройден
-                  </span>
-                {% else %}
-                  <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-                    Не пройден
-                  </span>
-                {% endif %}
-              </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-primary">{{ quiz_attempt.score }}</div>
-                  <div class="text-primary/70 text-sm">Правильных ответов</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-primary">{{ quiz_attempt.percentage|floatformat:1 }}%</div>
-                  <div class="text-primary/70 text-sm">Процент правильных</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-primary">{{ quiz_attempt.time_taken|floatformat:0 }}</div>
-                  <div class="text-primary/70 text-sm">Секунд</div>
-                </div>
-              </div>
-              
-              <div class="quiz-results-buttons">
-                <a href="{% url 'courses:quiz_results' course.id %}" 
-                   class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-6 py-3 text-center transition-all duration-300">
-                  Подробные результаты
-                </a>
-                {% if quiz_attempt.is_passed and quiz_certificate %}
-                  <a href="{% url 'courses:quiz_certificate' course.id %}" 
-                     class="certificate-button border-2 border-primary text-primary hover:bg-primary hover:text-primary/70 font-semibold rounded-full px-6 py-3 text-center transition-all duration-300">
-                    Скачать сертификат
-                  </a>
-                {% else %}
-                  <a href="{% url 'courses:start_quiz' course.id %}" 
-                     class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full px-6 py-3 text-center transition-all duration-300">
-                    Пересдать тест
-                  </a>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        {% endif %}
-
-        <br>
-        <div class="whitespace-nowrap flex max-sm:flex-col sm:items-center gap-3 lg:gap-6" data-aos="fade-up" data-aos-delay="600">
-          <a href="{% url 'courses:my_courses' %}"
-            class="w-fit bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
-            Мои курсы
-          </a>
-          <a href="{% url 'course-catalogue' %}"
-            class="w-fit font-semibold border-gradient-rounded-14 rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
-            Все курсы
-          </a>
-        </div>
-      </div>
     </section>
 
     <!-- Course Chapters with Expandable Content -->
@@ -378,6 +312,145 @@
         </div>
       </div>
     {% endif %}
+
+    <!-- Course Progress Card -->
+    <div class="mb-8" data-aos="fade-up" data-aos-delay="550" data-order-id="{{ order.id }}">
+      <div class="bg-white text-primary rounded-3xl p-4 md:p-7 lg:p-11">
+        <div class="flex max-md:flex-col justify-between gap-2 md:gap-3 lg:gap-5 max-md:mb-3 md:mb-4 lg:mb-5">
+          <div>
+            <p class="font-medium text-primary/50 text-sm md:text-base lg:text-xl max-md:mb-2 md:mb-3">
+              Курс
+            </p>
+
+            <h2 class="md:hidden text-primary !font-semibold text-lg md:text-xl lg:text-basic-40/12.5">
+              {{ course.name }}
+            </h2>
+          </div>
+
+          <div class="whitespace-nowrap flex max-sm:flex-col-reverse sm:items-center gap-2 md:gap-3 lg:gap-6">
+            <a href="{% url 'referal' %}"
+              class="w-fit hover-opacity-75 font-semibold border-2 border-brand-green-600 px-4 md:px-6 lg:px-8.5 py-2 md:py-2.5 rounded-full text-sm md:text-base">
+              Реферальная программа
+            </a>
+
+            {% if is_enrolled %}
+              {% if quiz_attempt %}
+                {% if quiz_attempt.is_passed %}
+                  <!-- Test Passed - Show Results Button -->
+                  <a href="{% url 'courses:quiz_results' course.id %}"
+                  class="w-fit bg-green-500 hover:bg-green-600 font-semibold text-white rounded-full px-4 md:px-6 lg:px-8.5 py-2 md:py-2.5 continue-button text-sm md:text-base">
+                  Результаты теста
+                  </a>
+                {% else %}
+                  <!-- Test Failed - Show Retake Button -->
+                  <a href="{% url 'courses:start_quiz' course.id %}"
+                  class="w-fit bg-yellow-500 hover:bg-yellow-600 font-semibold text-white rounded-full px-4 md:px-6 lg:px-8.5 py-2 md:py-2.5 continue-button text-sm md:text-base">
+                  Пересдать тест
+                  </a>
+                {% endif %}
+              {% else %}
+                <!-- No Test Attempt - Show Take Test Button -->
+                <a href="{% url 'courses:start_quiz' course.id %}"
+                class="w-fit bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-full px-4 md:px-6 lg:px-8.5 py-2 md:py-2.5 continue-button text-sm md:text-base">
+                Пройти тест
+                </a>
+              {% endif %}
+            {% else %}
+              <!-- Continue Learning Button -->
+              <a href="{% url 'courses:ordered_course_detail' order.id %}"
+                class="w-fit bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-full px-4 md:px-6 lg:px-8.5 py-2 md:py-2.5 continue-button text-sm md:text-base">
+                Продолжить обучение
+              </a>
+            {% endif %}
+          </div>
+        </div>
+        
+        <h2 class="max-md:hidden text-primary !font-semibold text-lg md:text-2xl lg:text-basic-40/12.5 md:mb-6 lg:mb-8.5">
+          {{ course.name }}
+        </h2>
+
+        <div class="flex max-md:flex-col justify-between gap-2 md:gap-3 lg:gap-5">
+          <div class="flex flex-wrap w-full gap-2 md:gap-3 lg:gap-6">
+            <p class="text-sm md:text-base lg:text-base font-semibold text-primary progress-percentage">
+              {{ progress_percentage }}%
+            </p>
+            <div class="w-full max-w-111 h-4.5 bg-primary/20 rounded-full">
+              <div class="h-full bg-gradient-display rounded-full progress-bar transition-all duration-500" 
+                   style="width: {{ progress_percentage }}%; min-width: 0;"></div>
+            </div>
+            <p class="text-primary/50 font-medium text-xs md:text-sm lg:text-base leading-none">
+              <span class="watched-videos">{{ watched_videos }}</span>/<span class="total-videos">{{ total_videos }}</span> видео, {{ total_videos }} часов, {{ total_videos }} академических часов
+            </p>
+          </div>              
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Results Card -->
+    {% if quiz_attempt %}
+      <div class="mb-8" data-aos="fade-up" data-aos-delay="600">
+        <div class="bg-white text-primary rounded-3xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-primary">Результаты теста</h3>
+            {% if quiz_attempt.is_passed %}
+              <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                Пройден
+              </span>
+            {% else %}
+              <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                Не пройден
+              </span>
+            {% endif %}
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-primary">{{ quiz_attempt.score }}</div>
+              <div class="text-primary/70 text-sm">Правильных ответов</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-primary">{{ quiz_attempt.percentage|floatformat:1 }}%</div>
+              <div class="text-primary/70 text-sm">Процент правильных</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-primary">{{ quiz_attempt.time_taken|floatformat:0 }}</div>
+              <div class="text-primary/70 text-sm">Секунд</div>
+            </div>
+          </div>
+          
+          <div class="quiz-results-buttons">
+            <a href="{% url 'courses:quiz_results' course.id %}" 
+               class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-6 py-3 text-center transition-all duration-300">
+              Подробные результаты
+            </a>
+            {% if quiz_attempt.is_passed and quiz_certificate %}
+              <a href="{% url 'courses:quiz_certificate' course.id %}" 
+                 class="certificate-button border-2 border-primary text-primary hover:bg-primary hover:text-primary/70 font-semibold rounded-full px-6 py-3 text-center transition-all duration-300">
+                Скачать сертификат
+              </a>
+            {% else %}
+              <a href="{% url 'courses:start_quiz' course.id %}" 
+                 class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-full px-6 py-3 text-center transition-all duration-300">
+                Пересдать тест
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <br>
+    <div class="whitespace-nowrap flex max-sm:flex-col sm:items-center gap-3 lg:gap-6" data-aos="fade-up" data-aos-delay="600">
+      <a href="{% url 'courses:my_courses' %}"
+        class="w-fit bg-gradient-display hover-opacity-75 font-semibold text-primary rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
+        Мои курсы
+      </a>
+      <a href="{% url 'course-catalogue' %}"
+        class="w-fit font-semibold border-gradient-rounded-14 rounded-[14px] px-6 md:px-8.5 lg:px-11 py-2.5 lg:py-4">
+        Все курсы
+      </a>
+    </div>
+  </div>
   </main>
 
   <!-- Video Modal -->
@@ -1101,6 +1174,80 @@
     // });
 
     // Event listeners are added in openVideoModal function
+
+    // Function to update progress bar
+    function updateProgressBar(orderId, progressData) {
+      const progressElement = document.querySelector(`[data-order-id="${orderId}"] .progress-percentage`);
+      const progressBarElement = document.querySelector(`[data-order-id="${orderId}"] .progress-bar`);
+      const watchedElement = document.querySelector(`[data-order-id="${orderId}"] .watched-videos`);
+      const totalElement = document.querySelector(`[data-order-id="${orderId}"] .total-videos`);
+      
+      if (progressElement) {
+        progressElement.textContent = progressData.percentage + '%';
+      }
+      
+      if (progressBarElement) {
+        progressBarElement.style.width = progressData.percentage + '%';
+      }
+      
+      if (watchedElement) {
+        watchedElement.textContent = progressData.watched_videos;
+      }
+      
+      if (totalElement) {
+        totalElement.textContent = progressData.total_videos;
+      }
+      
+      // Update button if completed
+      if (progressData.is_completed) {
+        const continueButton = document.querySelector(`[data-order-id="${orderId}"] .continue-button`);
+        if (continueButton) {
+          continueButton.innerHTML = 'Пройти тест';
+          continueButton.classList.remove('bg-gradient-display');
+          continueButton.classList.add('bg-green-500');
+        }
+      }
+    }
+
+    // Function to mark video as watched
+    function markVideoWatched(videoId, orderId) {
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                       document.querySelector('meta[name=csrf-token]')?.getAttribute('content');
+      
+      if (!csrfToken) {
+        console.error('CSRF token not found');
+        return;
+      }
+
+      fetch('{% url "courses:mark_video_watched" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          video_id: videoId
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Video marked as watched:', data);
+          updateProgressBar(orderId, data.progress);
+        } else {
+          console.error('Error marking video as watched:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    // Function to refresh progress from server
+    function refreshProgress(orderId) {
+      // This will be called when returning from video page
+      location.reload();
+    }
   </script>
 
   <style>
@@ -1129,6 +1276,25 @@
       .quiz-results-buttons {
         flex-direction: column;
       }
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .bg-gradient-display {
+      background: linear-gradient(135deg, #F0E263 0%, #C28D31 100%);
+    }
+    
+    .hover-opacity-75:hover {
+      opacity: 0.75;
+    }
+    
+    .progress-bar {
+      transition: width 0.5s ease-in-out;
     }
   </style>
 {% endblock %}
