@@ -385,7 +385,7 @@
     <!-- Modal Content -->
     <div class="relative w-full max-w-4xl mx-4 bg-black rounded-lg overflow-hidden shadow-2xl">
       <!-- Modal Header -->
-      <div class="flex items-center justify-between p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <div class="flex items-center justify-between p-3 bg-gradient-display text-white">
         <h3 id="videoTitle" class="text-lg font-semibold truncate pr-2"></h3>
         <button onclick="closeVideoModal()" class="text-gray-200 hover:text-white transition-colors flex-shrink-0">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -403,6 +403,44 @@
           preload="metadata">
           Ваш браузер не поддерживает видео элемент.
         </video>
+      </div>
+      
+      <!-- Navigation Buttons - Outside video player -->
+      <div class="bg-black/90 backdrop-blur-sm border-t border-white/10 p-4">
+        <div class="flex justify-between items-center">
+          <button 
+            id="prevVideoBtn"
+            class="nav-btn prev-btn bg-gradient-display hover-opacity-75 font-semibold text-primary disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:hover:scale-100 font-medium"
+            disabled>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            <span class="hidden sm:inline">Предыдущее</span>
+            <span class="sm:hidden">←</span>
+          </button>
+          
+          <div class="video-counter bg-black/80 backdrop-blur-sm text-white text-sm px-4 py-2 rounded-xl border border-white/20 shadow-lg text-center">
+            <div class="flex flex-col items-center">
+              <div class="flex items-center gap-2">
+                <span id="currentVideoNumber" class="font-bold text-blue-300">1</span> 
+                <span class="text-white/70">/</span> 
+                <span id="totalVideos" class="font-bold text-white">1</span>
+              </div>
+              <div id="chapterTitle" class="text-xs text-white/60 mt-1 truncate max-w-48"></div>
+            </div>
+          </div>
+          
+          <button 
+            id="nextVideoBtn"
+            class="nav-btn next-btn bg-gradient-display hover-opacity-75 font-semibold text-primary disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl flex items-center gap-3 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:hover:scale-100 font-medium"
+            disabled>
+            <span id="nextBtnText" class="hidden sm:inline">Следующее</span>
+            <span id="nextBtnIcon" class="sm:hidden">→</span>
+            <svg id="nextBtnSvg" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -463,27 +501,156 @@
       border-radius: 0;
       object-fit: contain;
     }
+    
+    /* Navigation buttons styling */
+    .nav-btn {
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .nav-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .nav-btn:hover:not(:disabled)::before {
+      left: 100%;
+    }
+    
+    .nav-btn:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    }
+    
+    .nav-btn:active:not(:disabled) {
+      transform: translateY(0) scale(0.98);
+      transition: transform 0.1s;
+    }
+    
+    .nav-btn:disabled {
+      cursor: not-allowed;
+      transform: none;
+      opacity: 0.5;
+    }
+    
+    .video-counter {
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 640px) {
+      .nav-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+      }
+      
+      .video-counter {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+      }
+    }
+    
+    /* Animation for button press */
+    @keyframes buttonPress {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+    
+    .nav-btn:active:not(:disabled) {
+      animation: buttonPress 0.1s ease-in-out;
+    }
   </style>
 
   <script>
     let currentVideoId = null;
     let videoStartTime = null;
     let hasMarkedAsWatched = false;
+    let allCourseVideos = [];
+    let currentVideoIndex = 0;
+    let eventListenersAdded = false;
+    let nextButtonClicks = 0;
+    let prevButtonClicks = 0;
 
     function openVideoModal(url, title, videoId) {
       currentVideoId = videoId;
       hasMarkedAsWatched = false;
       videoStartTime = Date.now();
       
+      // Load all course videos if not already loaded
+      if (allCourseVideos.length === 0) {
+        loadAllCourseVideos();
+      }
+      
+      // Find and set current video index
+      currentVideoIndex = allCourseVideos.findIndex(video => video.id == videoId);
+      
       document.getElementById('videoTitle').textContent = title;
       document.getElementById('videoPlayer').src = url;
       document.getElementById('videoModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
       
-      // Add event listeners for video tracking
-      const videoPlayer = document.getElementById('videoPlayer');
-      videoPlayer.addEventListener('ended', markVideoAsWatched);
-      videoPlayer.addEventListener('timeupdate', checkVideoProgress);
+      // Update navigation buttons
+      updateNavigationButtons();
+      
+      // Add event listeners only once
+      if (!eventListenersAdded) {
+        const videoPlayer = document.getElementById('videoPlayer');
+        videoPlayer.addEventListener('ended', markVideoAsWatched);
+        videoPlayer.addEventListener('timeupdate', checkVideoProgress);
+        
+        // Add button event listeners
+        document.getElementById('nextVideoBtn').addEventListener('click', playNextVideo);
+        document.getElementById('prevVideoBtn').addEventListener('click', playPreviousVideo);
+        
+        eventListenersAdded = true;
+      }
+    }
+
+    function loadAllCourseVideos() {
+      allCourseVideos = [];
+      
+      // Get all chapters in order
+      const allChapters = document.querySelectorAll('[x-data]');
+      
+      allChapters.forEach((chapter, chapterIndex) => {
+        const chapterTitle = chapter.querySelector('h4')?.textContent || `Chapter ${chapterIndex + 1}`;
+        
+        // Get all videos in this chapter
+        const chapterVideos = chapter.querySelectorAll('[data-video-id]');
+        
+        chapterVideos.forEach((video, videoIndex) => {
+          const titleElement = video.querySelector('.video-title p');
+          const buttonElement = video.querySelector('button[onclick*="openVideoModal"]');
+          
+          if (titleElement && buttonElement) {
+            const onclickAttr = buttonElement.getAttribute('onclick');
+            const urlMatch = onclickAttr.match(/'([^']+)'/);
+            
+            const videoData = {
+              id: video.getAttribute('data-video-id'),
+              title: titleElement.textContent,
+              url: urlMatch ? urlMatch[1] : '',
+              chapterTitle: chapterTitle,
+              chapterIndex: chapterIndex,
+              videoIndex: videoIndex
+            };
+            
+            allCourseVideos.push(videoData);
+          }
+        });
+      });
     }
 
     function closeVideoModal() {
@@ -500,6 +667,167 @@
       currentVideoId = null;
       videoStartTime = null;
       hasMarkedAsWatched = false;
+      // Don't clear allCourseVideos - keep it for next time
+      currentVideoIndex = 0;
+    }
+
+    function updateNavigationButtons() {
+      const prevBtn = document.getElementById('prevVideoBtn');
+      const nextBtn = document.getElementById('nextVideoBtn');
+      const currentVideoNumber = document.getElementById('currentVideoNumber');
+      const totalVideos = document.getElementById('totalVideos');
+      const chapterTitle = document.getElementById('chapterTitle');
+      const nextBtnText = document.getElementById('nextBtnText');
+      const nextBtnIcon = document.getElementById('nextBtnIcon');
+      const nextBtnSvg = document.getElementById('nextBtnSvg');
+      
+      if (prevBtn) {
+        prevBtn.disabled = currentVideoIndex <= 0;
+        prevBtn.style.opacity = currentVideoIndex <= 0 ? '0.5' : '1';
+      }
+      
+      if (nextBtn) {
+        const isLastVideo = currentVideoIndex >= allCourseVideos.length - 1;
+        nextBtn.disabled = false; // Never disable, just change text
+        
+        if (isLastVideo) {
+          // Last video - show "Start Over" button
+          if (nextBtnText) {
+            nextBtnText.textContent = 'Смотреть сначала';
+          }
+          if (nextBtnIcon) {
+            nextBtnIcon.textContent = '🔄';
+          }
+          if (nextBtnSvg) {
+            nextBtnSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>';
+          }
+          nextBtn.classList.remove('bg-gradient-display');
+          nextBtn.classList.add('bg-gradient-to-r', 'from-green-600', 'to-green-700', 'hover:from-green-700', 'hover:to-green-800');
+        } else {
+          // Not last video - show "Next" button
+          if (nextBtnText) {
+            nextBtnText.textContent = 'Следующее';
+          }
+          if (nextBtnIcon) {
+            nextBtnIcon.textContent = '→';
+          }
+          if (nextBtnSvg) {
+            nextBtnSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>';
+          }
+          nextBtn.classList.remove('bg-gradient-to-r', 'from-green-600', 'to-green-700', 'hover:from-green-700', 'hover:to-green-800');
+          nextBtn.classList.add('bg-gradient-display');
+        }
+      }
+      
+      if (currentVideoNumber) {
+        currentVideoNumber.textContent = currentVideoIndex + 1;
+      }
+      
+      if (totalVideos) {
+        totalVideos.textContent = allCourseVideos.length;
+      }
+      
+      if (chapterTitle && allCourseVideos[currentVideoIndex]) {
+        chapterTitle.textContent = allCourseVideos[currentVideoIndex].chapterTitle;
+      }
+    }
+
+    function playPreviousVideo() {
+      // Count button clicks
+      prevButtonClicks++;
+      console.log('=== PREVIOUS BUTTON CLICKED ===');
+      console.log('Next button clicks:', nextButtonClicks);
+      console.log('Previous button clicks:', prevButtonClicks);
+      console.log('Total button clicks:', nextButtonClicks + prevButtonClicks);
+      
+      if (currentVideoIndex > 0) {
+        // Add button press effect
+        const btn = document.getElementById('prevVideoBtn');
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          btn.style.transform = '';
+        }, 100);
+        
+        // Go to previous video
+        currentVideoIndex = currentVideoIndex - 1;
+        const prevVideo = allCourseVideos[currentVideoIndex];
+        
+        if (prevVideo) {
+          // Update video player
+          currentVideoId = prevVideo.id;
+          hasMarkedAsWatched = false;
+          videoStartTime = Date.now();
+          
+          document.getElementById('videoTitle').textContent = prevVideo.title;
+          const videoPlayer = document.getElementById('videoPlayer');
+          videoPlayer.src = prevVideo.url;
+          videoPlayer.load(); // Force reload the video
+          videoPlayer.play(); // Auto play the new video
+          
+          // Update navigation buttons
+          updateNavigationButtons();
+        }
+      }
+    }
+
+    function playNextVideo() {
+      // Count button clicks
+      nextButtonClicks++;
+      console.log('=== NEXT BUTTON CLICKED ===');
+      console.log('Next button clicks:', nextButtonClicks);
+      console.log('Previous button clicks:', prevButtonClicks);
+      console.log('Total button clicks:', nextButtonClicks + prevButtonClicks);
+      console.log('currentVideoIndex', currentVideoIndex);
+      console.log('allCourseVideos.length', allCourseVideos.length);
+      
+      // Add button press effect
+      const btn = document.getElementById('nextVideoBtn');
+      btn.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        btn.style.transform = '';
+      }, 100);
+      
+      if (currentVideoIndex < allCourseVideos.length - 1) {
+        // Go to next video
+        currentVideoIndex = currentVideoIndex + 1;
+        const nextVideo = allCourseVideos[currentVideoIndex];
+        console.log('nextVideo', nextVideo);
+        if (nextVideo) {
+          // Update video player
+          currentVideoId = nextVideo.id;
+          hasMarkedAsWatched = false;
+          videoStartTime = Date.now();
+          
+          document.getElementById('videoTitle').textContent = nextVideo.title;
+          const videoPlayer = document.getElementById('videoPlayer');
+          videoPlayer.src = nextVideo.url;
+          videoPlayer.load(); // Force reload the video
+          videoPlayer.play(); // Auto play the new video
+          
+          // Update navigation buttons
+          updateNavigationButtons();
+        }
+      } else {
+        // Last video - start over from beginning
+        currentVideoIndex = 0;
+        const firstVideo = allCourseVideos[currentVideoIndex];
+        
+        if (firstVideo) {
+          // Update video player
+          currentVideoId = firstVideo.id;
+          hasMarkedAsWatched = false;
+          videoStartTime = Date.now();
+          
+          document.getElementById('videoTitle').textContent = firstVideo.title;
+          const videoPlayer = document.getElementById('videoPlayer');
+          videoPlayer.src = firstVideo.url;
+          videoPlayer.load(); // Force reload the video
+          videoPlayer.play(); // Auto play the new video
+          
+          // Update navigation buttons
+          updateNavigationButtons();
+        }
+      }
     }
 
     function checkVideoProgress() {
@@ -760,12 +1088,19 @@
       }
     });
 
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeVideoModal();
-      }
-    });
+    // Close modal with Escape key and navigation with arrow keys
+    // Keyboard navigation (disabled to prevent double execution)
+    // document.addEventListener('keydown', function(e) {
+    //   if (e.key === 'Escape') {
+    //     closeVideoModal();
+    //   } else if (e.key === 'ArrowLeft' && document.getElementById('videoModal').style.display === 'flex') {
+    //     playPreviousVideo();
+    //   } else if (e.key === 'ArrowRight' && document.getElementById('videoModal').style.display === 'flex') {
+    //     playNextVideo();
+    //   }
+    // });
+
+    // Event listeners are added in openVideoModal function
   </script>
 
   <style>
