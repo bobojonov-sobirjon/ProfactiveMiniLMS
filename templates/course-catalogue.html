@@ -116,7 +116,7 @@
                 {% if course.image %}
                   <img src="{{ course.image.url }}" 
                        alt="{{ course.name }}"
-                       class="w-full h-full group-hover:scale-105 transition-transform duration-300">
+                       class="w-full h-full group-hover:scale-105 transition-transform duration-300 object-container">
                 {% else %}
                   <img src="{% static 'assets/images/main-hero.png' %}" 
                        alt="{{ course.name }}"
