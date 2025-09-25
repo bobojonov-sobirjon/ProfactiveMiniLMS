@@ -24,7 +24,9 @@
         class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-11 mb-6 md:mb-9 lg:mb-13.5 font-semibold" data-aos="fade-up" data-aos-delay="200">
         <!-- Service Cards -->
         {% for service in services %}
-        <div class="group bg-white rounded-3xl overflow-hidden" data-aos="fade-up" data-aos-delay="{% cycle '300' '400' '500' '600' '700' '800' %}">
+        <div class="group bg-white rounded-3xl overflow-hidden" 
+             x-data="{ expanded: false }"
+             data-aos="fade-up" data-aos-delay="{% cycle '300' '400' '500' '600' '700' '800' %}">
           <div class="h-40 md:h-56 w-full relative overflow-hidden">
             {% if service.image and service.image.url %}
             <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
@@ -41,9 +43,18 @@
             <h4 class="text-primary text-lg lg:text-basic-23/8.75 mb-2 md:mb-3.5 break-words">
               {{ service.title }}
             </h4>
-            <p class="text-primary/50 lg:text-lg/7 mb-5 md:mb-8 lg:mb-11 font-medium break-words">
-              {{ service.description|truncatewords:20 }}
-            </p>
+            <div class="mb-4">
+              <p class="text-primary/50 lg:text-lg/7 font-medium break-words">
+                <span x-show="!expanded">{{ service.description|truncatewords:15 }}</span>
+                <span x-show="expanded">{{ service.description }}</span>
+              </p>
+            </div>
+            <div class="text-center">
+              <button @click="expanded = !expanded" 
+                      class="bg-brand-yellow-500 hover:bg-brand-yellow-600 text-black px-4 py-2 rounded-lg font-semibold text-sm transition-colors duration-200">
+                <span x-text="expanded ? 'Свернуть' : 'Читать далее'"></span>
+              </button>
+            </div>
           </div>
         </div>
         {% empty %}
@@ -112,4 +123,5 @@
       }
     }
   }
+
 </script>
