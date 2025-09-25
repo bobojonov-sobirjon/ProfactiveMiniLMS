@@ -18,131 +18,98 @@
 
 <!-- Services Grid -->
 <section class="mb-12 md:mb-20 lg:mb-31">
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
-    <!-- Service 1 -->
-    <div class="group bg-white rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
-      <div class="bg-gradient-display size-16 flex items-center justify-center rounded-3xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-        <svg class="w-8 h-8 text-primary transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-primary mb-3 transition-colors duration-300 group-hover:text-brand-yellow-600">Повышение квалификации</h3>
-      <p class="text-primary/70 mb-4 transition-colors duration-300 group-hover:text-primary/90">Современные программы для развития профессиональных навыков</p>
-      <a href="{% url 'course-catalogue' %}" class="text-brand-yellow-500 hover:text-brand-yellow-600 font-medium transition-all duration-300 hover:translate-x-1 inline-flex items-center gap-2">
-        Подробнее <span class="transition-transform duration-300 group-hover:translate-x-1">→</span>
-      </a>
-    </div>
-
-    <!-- Service 2 -->
-    <div class="group bg-white rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
-      <div class="bg-gradient-display size-16 flex items-center justify-center rounded-3xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-        <svg class="w-8 h-8 text-primary transition-transform duration-300 group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-primary mb-3 transition-colors duration-300 group-hover:text-brand-yellow-600">Переподготовка</h3>
-      <p class="text-primary/70 mb-4 transition-colors duration-300 group-hover:text-primary/90">Полная смена профессиональной деятельности с нуля</p>
-      <a href="{% url 'course-catalogue' %}" class="text-brand-yellow-500 hover:text-brand-yellow-600 font-medium transition-all duration-300 hover:translate-x-1 inline-flex items-center gap-2">
-        Подробнее <span class="transition-transform duration-300 group-hover:translate-x-1">→</span>
-      </a>
-    </div>
-
-    <!-- Service 3 -->
-    <div class="bg-white rounded-3xl p-6" data-aos="fade-up" data-aos-delay="500">
-      <div class="bg-gradient-display size-16 flex items-center justify-center rounded-3xl mb-4">
-        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-primary mb-3">Консультации</h3>
-      <p class="text-primary/70 mb-4">Индивидуальные консультации по выбору направления обучения</p>
-      <a href="{% url 'contacts' %}" class="text-brand-yellow-500 hover:text-brand-yellow-600 font-medium">
-        Связаться →
-      </a>
-    </div>
-
-    <!-- Service 4 -->
-    <div class="bg-white rounded-3xl p-6" data-aos="fade-up" data-aos-delay="600">
-      <div class="bg-gradient-display size-16 flex items-center justify-center rounded-3xl mb-4">
-        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-primary mb-3">Онлайн обучение</h3>
-      <p class="text-primary/70 mb-4">Удобное дистанционное обучение из любой точки мира</p>
-      <a href="{% url 'course-catalogue' %}" class="text-brand-yellow-500 hover:text-brand-yellow-600 font-medium">
-        Подробнее →
-      </a>
-    </div>
-
-    <!-- Service 5 -->
-    <div class="bg-white rounded-3xl p-6" data-aos="fade-up" data-aos-delay="700">
-      <div class="bg-gradient-display size-16 flex items-center justify-center rounded-3xl mb-4">
-        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-primary mb-3">Сертификация</h3>
-      <p class="text-primary/70 mb-4">Получение официальных сертификатов по завершении курсов</p>
-      <a href="{% url 'course-catalogue' %}" class="text-brand-yellow-500 hover:text-brand-yellow-600 font-medium">
-        Подробнее →
-      </a>
-    </div>
-
-    <!-- Service 6 -->
-    <div class="bg-white rounded-3xl p-6" data-aos="fade-up" data-aos-delay="800">
-      <div class="bg-gradient-display size-16 flex items-center justify-center rounded-3xl mb-4">
-        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H16c-.8 0-1.54.37-2.01.99L12 11l-1.99-2.01A2.5 2.5 0 0 0 8 8H5.46c-.8 0-1.54.37-2.01.99L1 14.37V22h2v-6h2.5l2.54 7.63A1.5 1.5 0 0 0 9.46 24H11c.8 0 1.54-.37 2.01-.99L15 21l1.99 2.01A2.5 2.5 0 0 0 19 24h2.54c.8 0 1.54-.37 2.01-.99L24 16.37V22h2z"/>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-primary mb-3">Поддержка 24/7</h3>
-      <p class="text-primary/70 mb-4">Круглосуточная техническая поддержка для студентов</p>
-      <a href="{% url 'contacts' %}" class="text-brand-yellow-500 hover:text-brand-yellow-600 font-medium">
-        Связаться →
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Section -->
-<section class="mb-12 md:mb-20 lg:mb-31">
-  <div class="bg-gradient-banner min-h-111 rounded-3xl overflow-hidden">
-    <div class="relative flex max-lg:flex-col lg:items-center justify-between gap-x-7 gap-y-6">
-      <!-- Left -->
-      <div class="px-4 md:px-6 lg:px-13.5 pt-6 lg:py-23.5 flex-1" data-aos="fade-right" data-aos-delay="100">
-        <div class="w-full lg:max-w-145">
-          <p class="font-medium md:text-lg lg:text-xl text-primary/50 mb-3.5">
-            Получайте {% if referral_discount %}{{ referral_discount.percentage|floatformat:0 }}{% else %}16{% endif %}% с каждой продажи!
-          </p>
-
-          <h2 class="font-bold text-primary text-2xl md:text-3xl lg:text-basic-40/12.5 mb-6 md:mb-11 lg:mb-13.5">
-            Уже зарегистрированы <br class="max-lg:hidden"> в реферальной программе?
-          </h2>
-
-          <a href="{% url 'referal' %}" class="inline-block bg-hover-primary font-semibold rounded-[14px] py-3.5 lg:py-5 px-7 lg:px-13.5">
-            Узнать подробнее
-          </a>
+  <div>
+    <div x-data="showMore(6)">
+      <div
+        class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-11 mb-6 md:mb-9 lg:mb-13.5 font-semibold" data-aos="fade-up" data-aos-delay="200">
+        <!-- Service Cards -->
+        {% for service in services %}
+        <div class="group bg-white rounded-3xl overflow-hidden" data-aos="fade-up" data-aos-delay="{% cycle '300' '400' '500' '600' '700' '800' %}">
+          <div class="h-40 md:h-56 w-full relative overflow-hidden">
+            {% if service.image and service.image.url %}
+            <img class="relative z-0 size-full object-cover transition duration-200 group-hover:scale-105"
+              src="{{ service.image.url }}" alt="{{ service.title }}">
+            {% else %}
+            <div class="relative z-0 size-full bg-gradient-to-br from-brand-yellow-500/20 to-brand-yellow-600/20 flex items-center justify-center">
+              <svg class="w-16 h-16 text-brand-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            {% endif %}
+          </div>
+          <div class="p-4 lg:p-6">
+            <h4 class="text-primary text-lg lg:text-basic-23/8.75 mb-2 md:mb-3.5 break-words">
+              {{ service.title }}
+            </h4>
+            <p class="text-primary/50 lg:text-lg/7 mb-5 md:mb-8 lg:mb-11 font-medium break-words">
+              {{ service.description|truncatewords:20 }}
+            </p>
+          </div>
         </div>
-      </div>
-      <!-- Right -->
-      <div class="md:max-w-90.5 relative max-lg:mx-auto lg:mr-10" data-aos="fade-left" data-aos-delay="200">
-        <img class="relative z-0 size-full object-cover" src="{% static 'assets/images/banner-girl.png' %}" alt="img">
+        {% empty %}
+        <div class="col-span-full text-center py-20">
+          <p class="text-white/50 text-xl">Пока нет услуг</p>
+        </div>
+        {% endfor %}
       </div>
 
-      <div class="max-lg:hidden absolute left-1/2 bottom-1/4 z-0 -translate-x-full translate-y-full text-primary">
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
-            fill="#1E1E1E" fill-opacity="0.882353" />
-        </svg>
+      {% if services|length > 6 %}
+      <div class="text-center">
+        <button @click="toggle()" 
+                class="bg-gradient-to-r from-brand-yellow-500 to-brand-yellow-600 text-white px-8 py-3 rounded-full font-semibold hover:from-brand-yellow-600 hover:to-brand-yellow-700 transition-all duration-300">
+          <span x-text="buttonText"></span>
+        </button>
       </div>
-      <div class="max-lg:hidden absolute right-0 top-0 z-0 -translate-x-11 translate-y-11">
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M32 0L40.6429 23.3571L64 32L40.6429 40.6429L32 64L23.3571 40.6429L0 32L23.3571 23.3571L32 0Z"
-            fill="#1E1E1E" fill-opacity="0.882353" />
-        </svg>
-      </div>
+      {% endif %}
     </div>
   </div>
 </section>
 {% endblock %}
+
+{% block extra_css %}
+<style>
+  .text-gradient-display {
+    background: linear-gradient(135deg, #AB803B 0%, #CDB14F 23.53%, #F0E263 49.02%, #D9B84A 73.33%, #C28D31 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
+{% endblock %}
+
+<script>
+  function showMore(step = 6) {
+    return {
+      step,
+      visible: step,
+      items: [],
+      buttonText: "Показать еще услуги",
+
+      init() {
+        this.items = this.$el.querySelectorAll(".grid > div");
+        this.update();
+      },
+
+      update() {
+        this.items.forEach((el, i) => {
+          el.style.display = i < this.visible ? "block" : "none";
+        });
+
+        if (this.visible < this.items.length) {
+          this.buttonText = "Показать еще";
+        } else {
+          this.buttonText = "Скрыть услуги";
+        }
+      },
+
+      toggle() {
+        if (this.visible < this.items.length) {
+          this.visible += this.step;
+        } else {
+          this.visible = this.step;
+        }
+        this.update();
+      }
+    }
+  }
+</script>

@@ -42,7 +42,7 @@ class FAQ(models.Model):
 
     class Meta:
         verbose_name = "FAQ"
-        verbose_name_plural = "1. FAQ"
+        verbose_name_plural = "01. FAQ"
         ordering = ['order', 'created_at']
 
     def __str__(self):
@@ -103,7 +103,7 @@ class AboutSection(models.Model):
 
     class Meta:
         verbose_name = "О нас"
-        verbose_name_plural = "2. О нас"
+        verbose_name_plural = "02. О нас"
         ordering = ['order', 'created_at']
 
     def __str__(self):
@@ -155,7 +155,7 @@ class Blog(models.Model):
 
     class Meta:
         verbose_name = "Блог"
-        verbose_name_plural = "3. Блоги"
+        verbose_name_plural = "03. Блоги"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -231,7 +231,7 @@ class ReferralRequest(models.Model):
 
     class Meta:
         verbose_name = "Реферальная заявка"
-        verbose_name_plural = "5. Реферальные заявки"
+        verbose_name_plural = "05. Реферальные заявки"
         ordering = ['-created_at']
 
     def __str__(self):
@@ -324,7 +324,7 @@ class Document(models.Model):
 
     class Meta:
         verbose_name = "Документ"
-        verbose_name_plural = "4. Документы"
+        verbose_name_plural = "04. Документы"
         ordering = ['order', 'created_at']
 
     def __str__(self):
@@ -367,7 +367,7 @@ class DiscountForReferral(models.Model):
 
     class Meta:
         verbose_name = "Скидка для рефералов"
-        verbose_name_plural = "6. Скидки для рефералов"
+        verbose_name_plural = "06. Скидки для рефералов"
 
     def __str__(self):
         return f"{self.percentage}%"
@@ -419,7 +419,7 @@ class ReferralStep(models.Model):
 
     class Meta:
         verbose_name = "Шаг реферальной программы"
-        verbose_name_plural = "8. Шаги реферальной программы"
+        verbose_name_plural = "08. Шаги реферальной программы"
         ordering = ['order', 'created_at']
 
     def __str__(self):
@@ -492,7 +492,7 @@ class MainHeader(models.Model):
 
     class Meta:
         verbose_name = "Главный заголовок"
-        verbose_name_plural = "7. Главные заголовки"
+        verbose_name_plural = "07. Главные заголовки"
         ordering = ['created_at']
 
     def __str__(self):
@@ -515,6 +515,50 @@ class MainHeader(models.Model):
     def get_active_header(cls):
         """Возвращает активный заголовок"""
         return cls.objects.filter(is_active=True).first()
+
+
+class Service(models.Model):
+    """Service model for services page"""
+    title = models.CharField(
+        max_length=200,
+        verbose_name="Название услуги",
+        help_text="Название услуги"
+    )
+    description = models.TextField(
+        verbose_name="Описание",
+        help_text="Описание услуги"
+    )
+    image = models.ImageField(
+        upload_to='services/',
+        verbose_name="Изображение",
+        help_text="Изображение для услуги"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="Активен",
+        help_text="Активна ли услуга"
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Порядок",
+        help_text="Порядок отображения"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Дата обновления"
+    )
+
+    class Meta:
+        verbose_name = "Услуга"
+        verbose_name_plural = "10. Услуги"
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return self.title
 
 
 class ContactPage(models.Model):
@@ -544,7 +588,7 @@ class ContactPage(models.Model):
 
     class Meta:
         verbose_name = "Страница контактов"
-        verbose_name_plural = "9. Страницы контактов"
+        verbose_name_plural = "09. Страницы контактов"
         ordering = ['created_at']
 
     def __str__(self):

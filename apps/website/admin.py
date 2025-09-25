@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral, MainHeader, ReferralStep, ContactPage
+from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral, MainHeader, ReferralStep, ContactPage, Service
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
@@ -220,6 +220,30 @@ class MainHeaderAdmin(admin.ModelAdmin):
     def title_short(self, obj):
         return obj.title[:50] + "..." if len(obj.title) > 50 else obj.title
     title_short.short_description = "Заголовок"
+
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    """Service admin configuration"""
+    list_display = ['title', 'is_active', 'order', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['title', 'description']
+    list_editable = ['is_active', 'order']
+    ordering = ['order', 'created_at']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('title', 'description', 'image')
+        }),
+        ('Порядок и состояние', {
+            'fields': ('order', 'is_active')
+        }),
+        ('Даты', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 @admin.register(ContactPage)

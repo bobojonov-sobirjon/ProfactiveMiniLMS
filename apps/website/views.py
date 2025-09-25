@@ -3,7 +3,7 @@ from django.http import HttpResponseNotFound, JsonResponse
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral, MainHeader, ReferralStep, ContactPage
+from .models import FAQ, AboutSection, Blog, ReferralRequest, Document, DiscountForReferral, MainHeader, ReferralStep, ContactPage, Service
 from apps.courses.models import Categories, Courses
 
 def custom_404(request, exception=None):
@@ -44,7 +44,10 @@ def about(request):
 
 def services(request):
     """Services page view"""
+    services = Service.objects.filter(is_active=True).order_by('order', 'created_at')
+    
     context = {
+        'services': services,
         'referral_discount': DiscountForReferral.get_active_discount(),
     }
     return render(request, 'services.html', context)
