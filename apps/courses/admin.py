@@ -243,7 +243,7 @@ class QuizQuestionInline(admin.TabularInline):
     fk_name = 'quiz'
     verbose_name = 'Вопрос теста'
     verbose_name_plural = 'Вопросы теста'
-    fields = ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer', 'explanation', 'is_active']
+    fields = ['question_text', 'option_a', 'option_b', 'option_c', 'correct_answer', 'explanation', 'is_active']
     readonly_fields = ['created_at']
 
 
@@ -287,7 +287,7 @@ class QuizQuestionAdmin(admin.ModelAdmin):
             'fields': ('quiz', 'question_text', 'is_active')
         }),
         ('Варианты ответов', {
-            'fields': ('option_a', 'option_b', 'option_c', 'option_d', 'correct_answer')
+            'fields': ('option_a', 'option_b', 'option_c', 'correct_answer')
         }),
         ('Объяснение', {
             'fields': ('explanation',),

@@ -258,10 +258,9 @@ class QuizQuestion(models.Model):
     option_a = models.CharField(max_length=500, verbose_name="Вариант A")
     option_b = models.CharField(max_length=500, verbose_name="Вариант B")
     option_c = models.CharField(max_length=500, verbose_name="Вариант C")
-    option_d = models.CharField(max_length=500, verbose_name="Вариант D")
     correct_answer = models.CharField(
         max_length=1, 
-        choices=[('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')],
+        choices=[('A', 'A'), ('B', 'B'), ('C', 'C')],
         verbose_name="Правильный ответ"
     )
     explanation = models.TextField(blank=True, null=True, verbose_name="Объяснение")

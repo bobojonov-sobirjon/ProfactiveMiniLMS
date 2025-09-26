@@ -1082,3 +1082,18 @@ def quiz_certificate(request, course_id):
     
     return render(request, 'quiz/certificate.html', context)
 
+
+@login_required
+def quiz_dashboard(request):
+    """Quiz dashboard showing all user's quiz attempts"""
+    # Get all quiz attempts for the user
+    quiz_attempts = QuizAttempt.objects.filter(
+        user=request.user,
+        is_completed=True
+    ).select_related('quiz', 'quiz__course').order_by('-completed_at')
+    
+    context = {
+        'quiz_attempts': quiz_attempts,
+    }
+    
+    return render(request, 'quiz/quiz_dashboard.html', context)

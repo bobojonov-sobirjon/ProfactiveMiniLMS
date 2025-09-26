@@ -6,157 +6,104 @@ class Command(BaseCommand):
     help = 'Create sample quiz data for testing'
 
     def handle(self, *args, **options):
-        # Get the first course
-        try:
-            course = Courses.objects.first()
-            if not course:
-                self.stdout.write(
-                    self.style.ERROR('No courses found. Please create a course first.')
-                )
-                return
-        except Courses.DoesNotExist:
-            self.stdout.write(
-                self.style.ERROR('No courses found. Please create a course first.')
-            )
-            return
+        # Get the first course or create one
+        course, created = Courses.objects.get_or_create(
+            name="Python Programming Basics",
+            defaults={
+                'description': 'Learn the fundamentals of Python programming',
+                'author': 'John Doe',
+                'user_id': 1,  # Assuming admin user exists
+                'category_id': 1,  # Assuming first category exists
+            }
+        )
+        
+        if created:
+            self.stdout.write(f'Created course: {course.name}')
+        else:
+            self.stdout.write(f'Using existing course: {course.name}')
 
-        # Create quiz for the course
+        # Create quiz
         quiz, created = CourseQuiz.objects.get_or_create(
             course=course,
+            title="Python Basics Quiz",
             defaults={
-                'title': f'Тест по курсу "{course.name}"',
-                'description': 'Проверьте свои знания по пройденному материалу',
+                'description': 'Test your knowledge of Python programming basics',
+                'questions_count': 5,
                 'passing_score': 70,
-                'time_limit': 30,
-                'questions_count': 10,
+                'time_limit': 10,
                 'is_active': True
             }
         )
-
+        
         if created:
-            self.stdout.write(
-                self.style.SUCCESS(f'Created quiz: {quiz.title}')
-            )
+            self.stdout.write(f'Created quiz: {quiz.title}')
         else:
-            self.stdout.write(
-                self.style.WARNING(f'Quiz already exists: {quiz.title}')
-            )
+            self.stdout.write(f'Using existing quiz: {quiz.title}')
 
-        # Create sample questions
-        sample_questions = [
+        # Sample questions
+        questions_data = [
             {
-                'question_text': 'Что такое Django?',
-                'option_a': 'Язык программирования',
-                'option_b': 'Веб-фреймворк для Python',
-                'option_c': 'База данных',
-                'option_d': 'Операционная система',
+                'question_text': 'What is the correct way to create a variable in Python?',
+                'option_a': 'var name = "value"',
+                'option_b': 'name = "value"',
+                'option_c': 'variable name = "value"',
                 'correct_answer': 'B',
-                'explanation': 'Django - это высокоуровневый веб-фреймворк для Python.'
+                'explanation': 'In Python, variables are created by simply assigning a value using the = operator.'
             },
             {
-                'question_text': 'Какой метод используется для создания миграций в Django?',
-                'option_a': 'python manage.py migrate',
-                'option_b': 'python manage.py makemigrations',
-                'option_c': 'python manage.py runserver',
-                'option_d': 'python manage.py collectstatic',
-                'correct_answer': 'B',
-                'explanation': 'makemigrations создает файлы миграций, а migrate применяет их.'
-            },
-            {
-                'question_text': 'Что такое ORM в Django?',
-                'option_a': 'Объектно-реляционное отображение',
-                'option_b': 'Операционная система',
-                'option_c': 'Язык программирования',
-                'option_d': 'База данных',
-                'correct_answer': 'A',
-                'explanation': 'ORM позволяет работать с базой данных через объекты Python.'
-            },
-            {
-                'question_text': 'Какой файл содержит настройки Django проекта?',
-                'option_a': 'models.py',
-                'option_b': 'views.py',
-                'option_c': 'settings.py',
-                'option_d': 'urls.py',
+                'question_text': 'Which of the following is NOT a Python data type?',
+                'option_a': 'int',
+                'option_b': 'string',
+                'option_c': 'char',
                 'correct_answer': 'C',
-                'explanation': 'settings.py содержит все настройки Django проекта.'
+                'explanation': 'Python does not have a separate char data type. Characters are represented as strings of length 1.'
             },
             {
-                'question_text': 'Что такое middleware в Django?',
-                'option_a': 'База данных',
-                'option_b': 'Промежуточное ПО для обработки запросов',
-                'option_c': 'Шаблон',
-                'option_d': 'Модель',
+                'question_text': 'What is the output of print(3 + 2 * 4)?',
+                'option_a': '20',
+                'option_b': '11',
+                'option_c': '14',
                 'correct_answer': 'B',
-                'explanation': 'Middleware обрабатывает запросы и ответы на промежуточном уровне.'
+                'explanation': 'Due to operator precedence, multiplication is performed first: 2 * 4 = 8, then 3 + 8 = 11.'
             },
             {
-                'question_text': 'Как создать суперпользователя в Django?',
-                'option_a': 'python manage.py createsuperuser',
-                'option_b': 'python manage.py createuser',
-                'option_c': 'python manage.py superuser',
-                'option_d': 'python manage.py admin',
-                'correct_answer': 'A',
-                'explanation': 'createsuperuser создает администратора Django.'
-            },
-            {
-                'question_text': 'Что такое MVT в Django?',
-                'option_a': 'Model-View-Template',
-                'option_b': 'Model-View-Controller',
-                'option_c': 'Many-Very-Template',
-                'option_d': 'Model-Very-Template',
-                'correct_answer': 'A',
-                'explanation': 'Django использует архитектуру Model-View-Template.'
-            },
-            {
-                'question_text': 'Как запустить сервер разработки Django?',
-                'option_a': 'python manage.py startserver',
-                'option_b': 'python manage.py runserver',
-                'option_c': 'python manage.py server',
-                'option_d': 'python manage.py dev',
+                'question_text': 'Which keyword is used to define a function in Python?',
+                'option_a': 'function',
+                'option_b': 'def',
+                'option_c': 'func',
                 'correct_answer': 'B',
-                'explanation': 'runserver запускает встроенный сервер разработки.'
+                'explanation': 'The def keyword is used to define functions in Python.'
             },
             {
-                'question_text': 'Что такое URLconf в Django?',
-                'option_a': 'Конфигурация URL-ов',
-                'option_b': 'База данных',
-                'option_c': 'Шаблон',
-                'option_d': 'Модель',
-                'correct_answer': 'A',
-                'explanation': 'URLconf определяет, какие URL-ы обрабатываются какими представлениями.'
-            },
-            {
-                'question_text': 'Как получить объект по ID в Django ORM?',
-                'option_a': 'Model.objects.get(id=1)',
-                'option_b': 'Model.objects.filter(id=1)',
-                'option_c': 'Model.objects.all(id=1)',
-                'option_d': 'Model.objects.find(id=1)',
-                'correct_answer': 'A',
-                'explanation': 'get() возвращает один объект, filter() возвращает QuerySet.'
+                'question_text': 'What will be the output of len("Hello World")?',
+                'option_a': '10',
+                'option_b': '11',
+                'option_c': '12',
+                'correct_answer': 'B',
+                'explanation': 'The len() function returns the number of characters in the string, including the space.'
             }
         ]
 
-        created_count = 0
-        for i, question_data in enumerate(sample_questions):
+        # Create questions
+        for i, q_data in enumerate(questions_data, 1):
             question, created = QuizQuestion.objects.get_or_create(
                 quiz=quiz,
-                question_text=question_data['question_text'],
+                question_text=q_data['question_text'],
                 defaults={
-                    'option_a': question_data['option_a'],
-                    'option_b': question_data['option_b'],
-                    'option_c': question_data['option_c'],
-                    'option_d': question_data['option_d'],
-                    'correct_answer': question_data['correct_answer'],
-                    'explanation': question_data['explanation'],
+                    'option_a': q_data['option_a'],
+                    'option_b': q_data['option_b'],
+                    'option_c': q_data['option_c'],
+                    'correct_answer': q_data['correct_answer'],
+                    'explanation': q_data['explanation'],
                     'is_active': True
                 }
             )
+            
             if created:
-                created_count += 1
+                self.stdout.write(f'Created question {i}: {question.question_text[:50]}...')
+            else:
+                self.stdout.write(f'Question {i} already exists')
 
         self.stdout.write(
-            self.style.SUCCESS(f'Created {created_count} questions for quiz: {quiz.title}')
-        )
-        self.stdout.write(
-            self.style.SUCCESS(f'Total questions in quiz: {quiz.quizquestion_set.count()}')
+            self.style.SUCCESS('Successfully created sample quiz data!')
         )

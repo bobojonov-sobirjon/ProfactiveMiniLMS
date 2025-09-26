@@ -18,6 +18,7 @@ urlpatterns = [
     path('create-review/<int:course_id>/', views.create_course_review, name='create_review'),
     path('reviews/', views.reviews_page, name='reviews'),
     # Quiz URLs
+    path('quiz-dashboard/', views.quiz_dashboard, name='quiz_dashboard'),
     path('quiz/<int:course_id>/start/', views.start_quiz, name='start_quiz'),
     path('quiz/<int:course_id>/submit/', views.submit_quiz, name='submit_quiz'),
     path('quiz/<int:course_id>/results/', views.quiz_results, name='quiz_results'),

@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мои тесты{% endblock %}
+
+{% block content %}
+  <!-- Main -->
+  <main class="container-base">
+    <!-- Dashboard Header -->
+    <section class="mb-12 md:mb-20 lg:mb-31 pt-8">
+      <div class="text-center mb-8 md:mb-12">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+          Мои тесты
+        </h1>
+        <p class="text-white/70 text-lg">
+          Просмотрите результаты ваших тестов и сертификаты
+        </p>
+      </div>
+    </section>
+
+    <!-- Quiz Attempts -->
+    <section class="mb-8">
+      {% if quiz_attempts %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {% for attempt in quiz_attempts %}
+            <div class="bg-white text-primary rounded-3xl p-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:100 }}">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-primary">{{ attempt.quiz.title }}</h3>
+                <div class="flex items-center gap-2">
+                  {% if attempt.is_passed %}
+                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                      Пройден
+                    </span>
+                  {% else %}
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                      <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                      Не пройден
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+              
+              <p class="text-primary/70 text-sm mb-4">{{ attempt.quiz.course.name }}</p>
+              
+              <div class="space-y-3 mb-6">
+                <div class="flex justify-between items-center">
+                  <span class="text-primary/70">Результат:</span>
+                  <span class="font-semibold text-primary">{{ attempt.percentage|floatformat:1 }}%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-primary/70">Правильных ответов:</span>
+                  <span class="font-semibold text-primary">{{ attempt.score }}/{{ attempt.answers|length }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-primary/70">Время прохождения:</span>
+                  <span class="font-semibold text-primary">{{ attempt.time_taken|floatformat:0 }}с</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-primary/70">Дата прохождения:</span>
+                  <span class="font-semibold text-primary">{{ attempt.completed_at|date:"d.m.Y" }}</span>
+                </div>
+              </div>
+              
+              <!-- Progress Bar -->
+              <div class="mb-6">
+                <div class="w-full bg-primary/20 rounded-full h-2">
+                  <div class="h-2 rounded-full {% if attempt.is_passed %}bg-green-500{% else %}bg-red-500{% endif %}" 
+                       style="width: {{ attempt.percentage }}%"></div>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                  <span class="text-primary/50 text-xs">0%</span>
+                  <span class="text-primary/50 text-xs">Проходной балл: {{ attempt.quiz.passing_score }}%</span>
+                  <span class="text-primary/50 text-xs">100%</span>
+                </div>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex flex-col gap-2">
+                <a href="{% url 'courses:quiz_results' attempt.quiz.course.id %}" 
+                   class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-4 py-2 text-sm transition-all duration-300 text-center">
+                  Просмотреть результаты
+                </a>
+                
+                {% if attempt.is_passed %}
+                  <a href="{% url 'courses:quiz_certificate' attempt.quiz.course.id %}" 
+                     class="border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-full px-4 py-2 text-sm transition-all duration-300 text-center">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Сертификат
+                  </a>
+                {% else %}
+                  <a href="{% url 'courses:start_quiz' attempt.quiz.course.id %}" 
+                     class="border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-full px-4 py-2 text-sm transition-all duration-300 text-center">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Попробовать снова
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-12">
+          <div class="w-24 h-24 mx-auto mb-6 bg-white/10 rounded-full flex items-center justify-center">
+            <svg class="w-12 h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-2">Нет пройденных тестов</h3>
+          <p class="text-white/70 mb-6">Вы еще не проходили тесты. Начните с изучения курсов!</p>
+          <a href="{% url 'courses:my_courses' %}" 
+             class="bg-gradient-display hover:opacity-75 font-semibold text-primary rounded-full px-6 py-3 text-lg transition-all duration-300">
+            Мои курсы
+          </a>
+        </div>
+      {% endif %}
+    </section>
+  </main>
+
+  <style>
+    .bg-gradient-display {
+      background: linear-gradient(135deg, #F0E263 0%, #C28D31 100%);
+    }
+    
+    .hover-opacity-75:hover {
+      opacity: 0.75;
+    }
+  </style>
+{% endblock %}
