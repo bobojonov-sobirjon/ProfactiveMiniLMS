@@ -399,7 +399,7 @@
   </main>
 
   <!-- FAQ Section - Show on all pages except course-catalogue -->
-  {% if request.resolver_match.url_name != 'course-catalogue' %}
+  {% if request.resolver_match.url_name != 'course-catalogue' and request.resolver_match.url_name != 'contacts' and request.resolver_match.url_name != 'blog' %}
     {% include 'components/faq_component.html' %}
 {% endif %}
 
