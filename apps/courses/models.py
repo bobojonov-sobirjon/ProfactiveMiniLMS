@@ -248,7 +248,7 @@ class CourseQuiz(models.Model):
         """Get random questions for the quiz"""
         if count is None:
             count = self.questions_count
-        return self.quizquestion_set.filter(is_active=True).order_by('-id')
+        return self.quizquestion_set.filter(is_active=True).order_by('id')
 
 
 class QuizQuestion(models.Model):
