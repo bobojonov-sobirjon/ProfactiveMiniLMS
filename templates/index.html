@@ -113,12 +113,12 @@
             class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-11 mb-6 md:mb-9 lg:mb-13.5 font-semibold">
             {% for course in popular_courses %}
             <div class="group bg-white rounded-3xl overflow-hidden flex flex-col h-full">
-              <div class="h-40 md:h-56 w-full relative overflow-hidden">
+              <div class="h-60 md:h-56 w-full relative overflow-hidden">
                 {% if course.image %}
-                  <img class="relative z-0 size-full transition duration-200 group-hover:scale-105"
+                  <img class="relative z-0 size-full transition duration-200 group-hover:scale-105 object-container scale-[1.05]"
                        src="{{ course.image.url }}" alt="{{ course.name }}">
                 {% else %}
-                  <img class="relative z-0 size-full transition duration-200 group-hover:scale-105"
+                  <img class="relative z-0 size-full transition duration-200 group-hover:scale-105 object-container scale-[1.05]"
                        src="{% static 'assets/images/main-hero.png' %}" alt="{{ course.name }}">
                 {% endif %}
               </div>
