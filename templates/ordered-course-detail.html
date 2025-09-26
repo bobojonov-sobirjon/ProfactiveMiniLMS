@@ -908,7 +908,7 @@
       if (videoPlayer.duration > 0) {
         const watchedPercentage = (videoPlayer.currentTime / videoPlayer.duration) * 100;
         // Mark as watched if user watched more than 80% of the video
-        if (watchedPercentage >= 95 && !hasMarkedAsWatched) {
+        if (watchedPercentage >= 99 && !hasMarkedAsWatched) {
           markVideoAsWatched();
         }
       }
