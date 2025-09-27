@@ -71,6 +71,9 @@ def course_detail(request, course_id):
     # Get active reviews for this course
     reviews = CourseReview.objects.filter(course=course, is_active=True).order_by('-created_at')[:5]
     
+    # Get course quiz data
+    course_quiz = CourseQuiz.objects.filter(course=course, is_active=True).first()
+    
     context = {
         'course': course,
         'chapters': chapters,
@@ -83,6 +86,7 @@ def course_detail(request, course_id):
         'total_duration_minutes': total_duration_minutes,
         'is_enrolled': is_enrolled,
         'reviews': reviews,
+        'course_quiz': course_quiz,
         'referral_discount': DiscountForReferral.get_active_discount(),
     }
     
