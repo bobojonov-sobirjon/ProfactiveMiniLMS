@@ -13,7 +13,7 @@
         <div class="bg-white text-primary rounded-3xl p-8 md:p-12 shadow-2xl" data-aos="fade-up">
           <!-- Certificate Header -->
           <div class="text-center mb-8">
-            <div class="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center">
+            <div class="w-20 h-20 mx-auto mb-6  rounded-full flex items-center justify-center">
               <img src="{% static 'assets/svgs/logo.svg' %}" alt="Diplom" class="w-full h-full object-contain">
             </div>
             <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">ДИПЛОМ</h1>
@@ -87,19 +87,6 @@
               </svg>
               Печать диплома
             </button>
-            
-            <button onclick="downloadCertificate()" 
-                    class="border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold rounded-full px-8 py-4 text-lg transition-all duration-300">
-              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              Скачать PDF диплома
-            </button>
-            
-            <a href="{% url 'courses:my_courses' %}" 
-               class="text-primary hover:text-primary/70 font-semibold underline">
-              Вернуться к курсам повышения квалификации
-            </a>
           </div>
         </div>
       </div>
@@ -134,7 +121,28 @@
     }
   </style>
 
+  <!-- Include jsPDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Include jsPDF font support for Cyrillic -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.plugin.standard_fonts_metrics.min.js"></script>
+
   <script>
+    // Pass Django template data to JavaScript
+    const certificateData = {
+      userLastName: '{{ user.last_name }}',
+      userFirstName: '{{ user.first_name }}',
+      userPatronymic: '{{ user.patronymic }}',
+      courseName: '{{ course.name }}',
+      attemptScore: {{ attempt.score }},
+      attemptTotal: {{ attempt.answers|length }},
+      attemptPercentage: {{ attempt.percentage|floatformat:1 }},
+      attemptTimeTaken: {{ attempt.time_taken|floatformat:0 }},
+      attemptCompletedAt: '{{ attempt.completed_at|date:"d.m.Y H:i" }}',
+      certificateNumber: '{{ certificate.certificate_number }}',
+      certificateIssuedAt: '{{ certificate.issued_at|date:"d.m.Y" }}'
+    };
+
     function printCertificate() {
       // Create a new window for printing
       const printWindow = window.open('', '_blank');
@@ -155,50 +163,53 @@
             .certificate {
               max-width: 800px;
               margin: 0 auto;
-              padding: 40px;
-              border: 3px solid #F0E263;
+              padding: 15px;
+              border: 2px solid #F0E263;
               text-align: center;
+              page-break-inside: avoid;
+              height: calc(100vh - 20px);
+              box-sizing: border-box;
             }
             .header {
-              margin-bottom: 30px;
+              margin-bottom: 15px;
             }
             .header h1 {
-              font-size: 36px;
+              font-size: 28px;
+              font-weight: bold;
+              color: #333;
+              margin: 5px 0;
+            }
+            .content {
+              margin: 15px 0;
+            }
+            .content h2 {
+              font-size: 22px;
               font-weight: bold;
               color: #333;
               margin: 10px 0;
             }
-            .content {
-              margin: 30px 0;
-            }
-            .content h2 {
-              font-size: 28px;
-              font-weight: bold;
-              color: #333;
-              margin: 20px 0;
-            }
             .content h3 {
-              font-size: 24px;
+              font-size: 18px;
               font-weight: 600;
               color: #333;
-              margin: 15px 0;
+              margin: 8px 0;
             }
             .details {
               display: flex;
               justify-content: space-around;
-              margin: 30px 0;
+              margin: 15px 0;
             }
             .detail-item {
               background: #f8f9fa;
-              padding: 20px;
+              padding: 15px;
               border-radius: 10px;
               flex: 1;
               margin: 0 10px;
             }
             .footer {
               border-top: 2px solid #eee;
-              padding-top: 20px;
-              margin-top: 30px;
+              padding-top: 15px;
+              margin-top: 15px;
               display: flex;
               justify-content: space-between;
             }
@@ -208,52 +219,88 @@
               font-weight: bold;
               color: #333;
             }
+            .logo-container {
+              margin-bottom: 20px;
+            }
+            .logo {
+              width: 80px;
+              height: 80px;
+              object-fit: contain;
+            }
+            .signature-img {
+              width: 150px;
+              height: 60px;
+              object-fit: contain;
+              margin: 10px 0;
+            }
+            .company-seal {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .seal-img {
+              width: 120px;
+              height: 120px;
+              object-fit: contain;
+            }
+            .footer {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+            }
+            .footer > div {
+              flex: 1;
+              text-align: center;
+            }
           </style>
         </head>
         <body>
           <div class="certificate">
             <div class="header">
+              <div class="logo-container">
+                <img src="{% static 'assets/svgs/logo.svg' %}" alt="Logo" class="logo">
+              </div>
               <h1>ДИПЛОМ</h1>
-              <p>О прохождении теста</p>
+              <p>Диплом о прохождении курса повышения квалификации</p>
             </div>
             
             <div class="content">
               <p>Настоящим удостоверяется, что</p>
-              <h2>{{ user.first_name }} {{ user.last_name }} {{ user.patronymic }}</h2>
+              <h2>${certificateData.userFirstName} ${certificateData.userLastName} ${certificateData.userPatronymic}</h2>
               <p>успешно прошел(а) тест по курсу</p>
-              <h3>{{ course.name }}</h3>
-              <p>{{ quiz.title }}</p>
+              <h3>${certificateData.courseName}</h3>
             </div>
             
             <div class="details">
               <div class="detail-item">
                 <h4>Результат теста</h4>
-                <p>{{ attempt.score }} из {{ attempt.answers|length }} правильных ответов</p>
-                <p>{{ attempt.percentage|floatformat:1 }}% правильных ответов</p>
+                <p>${certificateData.attemptScore} из ${certificateData.attemptTotal} правильных ответов</p>
+                <p>${certificateData.attemptPercentage}% правильных ответов</p>
               </div>
               <div class="detail-item">
                 <h4>Время прохождения</h4>
-                <p>{{ attempt.time_taken|floatformat:0 }} секунд</p>
-                <p>Завершен: {{ attempt.completed_at|date:"d.m.Y H:i" }}</p>
+                <p>${certificateData.attemptTimeTaken} секунд</p>
+                <p>Завершен: ${certificateData.attemptCompletedAt}</p>
               </div>
             </div>
             
             <div class="certificate-number">
-              <p>Номер диплома: {{ certificate.certificate_number }}</p>
-              <p>Выдан: {{ certificate.issued_at|date:"d.m.Y" }}</p>
+              <p>Номер диплома: ${certificateData.certificateNumber}</p>
+              <p>Выдан: ${certificateData.certificateIssuedAt}</p>
             </div>
             
             <div class="footer">
               <div>
-                <p>Подпись менеджера</p>
-                <div style="width: 150px; height: 50px; border-bottom: 2px solid #333; margin-top: 10px;"></div>
+                <p>Генеральный директор ООО «ПРОФ-АКТИВ»</p>
+                <p>Ворожищева Н.Г.</p>
+                <img src="{% static 'assets/images/1000106674 (1).png' %}" alt="Подпись" class="signature-img">
+              </div>
+              <div class="company-seal">
+                <img src="{% static 'assets/images/IMG-20250731-WA0078 (1).png' %}" alt="Печать компании" class="seal-img">
               </div>
               <div>
-                <p>Подпись менеджера</p>
-                <div style="width: 150px; height: 50px; border-bottom: 2px solid #333; margin-top: 10px;"></div>
-              </div>
-              <div>
-                  <p>Дата выдачи: {{ certificate.issued_at|date:"d.m.Y" }}</p>
+                <p>Дата выдачи</p>
+                <p><strong>${certificateData.certificateIssuedAt}</strong></p>
               </div>
             </div>
           </div>
@@ -266,10 +313,441 @@
       printWindow.print();
     }
 
-    function downloadCertificate() {
-      // For now, just trigger print
-      // In a real implementation, you would generate a PDF
-      printCertificate();
+    async function downloadCertificate() {
+      try {
+        console.log('Starting PDF generation...');
+        
+        // Use the HTML-to-PDF method that preserves Cyrillic text
+        await generateHTMLToPDF();
+        
+      } catch (error) {
+        console.error('Detailed error:', error);
+        console.error('Error stack:', error.stack);
+        
+        // Try fallback method
+        try {
+          console.log('Trying fallback PDF generation method...');
+          await generateSimplePDF();
+        } catch (fallbackError) {
+          console.error('Fallback method also failed:', fallbackError);
+          
+          let errorMessage = 'Произошла ошибка при создании PDF. ';
+          errorMessage += `Детали ошибки: ${error.message}. `;
+          errorMessage += 'Попробуйте использовать функцию печати или обновите страницу.';
+          
+          alert(errorMessage);
+        }
+      }
+    }
+
+    // HTML-to-PDF method that preserves Cyrillic text
+    async function generateHTMLToPDF() {
+      try {
+        // Create a new window for PDF generation
+        const printWindow = window.open('', '_blank');
+        
+        // Create HTML content with proper encoding
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Диплом - ${certificateData.courseName}</title>
+            <style>
+              @page {
+                size: A4;
+                margin: 5mm;
+              }
+              @media print {
+                body {
+                  margin: 0;
+                  padding: 0;
+                }
+                .certificate {
+                  page-break-inside: avoid;
+                  height: calc(100vh - 20px);
+                  overflow: hidden;
+                  max-width: calc(100% - 10px);
+                  margin: 5px auto;
+                }
+              }
+              body { 
+                font-family: Arial, sans-serif; 
+                margin: 0; 
+                padding: 0; 
+                background: white;
+                color: #333;
+              }
+              .certificate {
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 15px;
+                border: 2px solid #F0E263;
+                text-align: center;
+                background: white;
+                page-break-inside: avoid;
+                height: calc(100vh - 20px);
+                box-sizing: border-box;
+              }
+              .header h1 {
+                font-size: 28px;
+                font-weight: bold;
+                color: #333;
+                margin: 5px 0;
+              }
+              .header p {
+                font-size: 16px;
+                color: #666;
+                margin: 5px 0;
+              }
+              .content h2 {
+                font-size: 28px;
+                font-weight: bold;
+                color: #333;
+                margin: 20px 0;
+              }
+              .content h3 {
+                font-size: 24px;
+                font-weight: 600;
+                color: #333;
+                margin: 15px 0;
+              }
+              .details {
+                display: flex;
+                justify-content: space-around;
+                margin: 30px 0;
+                gap: 20px;
+              }
+              .detail-item {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                flex: 1;
+                text-align: left;
+              }
+              .detail-item h4 {
+                font-size: 16px;
+                font-weight: bold;
+                margin: 0 0 10px 0;
+                color: #333;
+              }
+              .detail-item p {
+                margin: 5px 0;
+                font-size: 14px;
+                color: #666;
+              }
+              .certificate-number {
+                margin: 30px 0;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 10px;
+              }
+              .certificate-number p {
+                margin: 5px 0;
+                font-size: 16px;
+              }
+              .certificate-number .number {
+                font-family: monospace;
+                font-size: 20px;
+                font-weight: bold;
+                color: #333;
+              }
+              .footer {
+                border-top: 2px solid #eee;
+                padding-top: 20px;
+                margin-top: 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+              }
+              .footer > div {
+                flex: 1;
+                text-align: center;
+              }
+              .footer p {
+                margin: 5px 0;
+                font-size: 12px;
+                color: #666;
+              }
+              .logo-container {
+                margin-bottom: 20px;
+              }
+              .logo {
+                width: 80px;
+                height: 80px;
+                object-fit: contain;
+              }
+              .signature-img {
+                width: 150px;
+                height: 60px;
+                object-fit: contain;
+                margin: 10px 0;
+              }
+              .company-seal {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .seal-img {
+                width: 120px;
+                height: 120px;
+                object-fit: contain;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="certificate">
+              <div class="header">
+                <div class="logo-container">
+                  <img src="{% static 'assets/svgs/logo.svg' %}" alt="Logo" class="logo">
+                </div>
+                <h1>ДИПЛОМ</h1>
+                <p>Диплом о прохождении курса повышения квалификации</p>
+              </div>
+              
+              <div class="content">
+                <p>Настоящим дипломом удостоверяется, что</p>
+                <h2>${certificateData.userLastName} ${certificateData.userFirstName} ${certificateData.userPatronymic}</h2>
+                <p>прошел(ла) курс по теме:</p>
+                <h3>${certificateData.courseName}</h3>
+              </div>
+              
+              <div class="details">
+                <div class="detail-item">
+                  <h4>Результат теста</h4>
+                  <p>${certificateData.attemptScore} из ${certificateData.attemptTotal} правильных ответов</p>
+                  <p>${certificateData.attemptPercentage}% правильных ответов</p>
+                </div>
+                <div class="detail-item">
+                  <h4>Время прохождения</h4>
+                  <p>${certificateData.attemptTimeTaken} секунд</p>
+                  <p>Завершен: ${certificateData.attemptCompletedAt}</p>
+                </div>
+              </div>
+              
+              <div class="certificate-number">
+                <p>Номер диплома</p>
+                <p class="number">${certificateData.certificateNumber}</p>
+                <p>Выдан: ${certificateData.certificateIssuedAt}</p>
+              </div>
+              
+              <div class="footer">
+                <div>
+                  <p>Генеральный директор ООО «ПРОФ-АКТИВ»</p>
+                  <p>Ворожищева Н.Г.</p>
+                  <img src="{% static 'assets/images/1000106674 (1).png' %}" alt="Подпись" class="signature-img">
+                </div>
+                <div class="company-seal">
+                  <img src="{% static 'assets/images/IMG-20250731-WA0078 (1).png' %}" alt="Печать компании" class="seal-img">
+                </div>
+                <div>
+                  <p>Дата выдачи</p>
+                  <p><strong>${certificateData.certificateIssuedAt}</strong></p>
+                </div>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+        
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        
+        // Wait for content to load
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Trigger print dialog
+        printWindow.focus();
+        printWindow.print();
+        
+        console.log('HTML-to-PDF generation completed');
+        
+      } catch (error) {
+        console.error('HTML-to-PDF generation failed:', error);
+        throw error;
+      }
+    }
+
+    // Enhanced PDF generation method with better formatting
+    async function generateEnhancedPDF() {
+      if (typeof window.jspdf === 'undefined') {
+        throw new Error('jsPDF library not loaded');
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // Set font with proper encoding for Cyrillic
+      pdf.setFont('helvetica', 'normal');
+      
+      // Add golden border (simulated with rectangle)
+      pdf.setDrawColor(240, 226, 99); // Golden color
+      pdf.setLineWidth(3);
+      pdf.rect(10, 10, 190, 277); // A4 with margins
+      
+      // Add title section
+      pdf.setFontSize(32);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 51, 51);
+      pdf.text('ДИПЛОМ', 105, 40, { align: 'center' });
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(102, 102, 102);
+      pdf.text('Диплом о прохождении курса повышения квалификации', 105, 50, { align: 'center' });
+      
+      // Add main content
+      pdf.setFontSize(16);
+      pdf.setTextColor(51, 51, 51);
+      pdf.text('Настоящим дипломом удостоверяется, что', 105, 70, { align: 'center' });
+      
+      pdf.setFontSize(22);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${certificateData.userLastName} ${certificateData.userFirstName} ${certificateData.userPatronymic}`, 105, 85, { align: 'center' });
+      
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('прошел(ла) курс по теме:', 105, 100, { align: 'center' });
+      
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(certificateData.courseName, 105, 115, { align: 'center' });
+      
+      // Add details in boxes
+      const boxY = 140;
+      const boxHeight = 40;
+      const boxWidth = 80;
+      const leftBoxX = 25;
+      const rightBoxX = 105;
+      
+      // Left box - Test results
+      pdf.setFillColor(245, 245, 245);
+      pdf.rect(leftBoxX, boxY, boxWidth, boxHeight, 'F');
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 51, 51);
+      pdf.text('Результат теста', leftBoxX + 5, boxY + 10);
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`${certificateData.attemptScore} из ${certificateData.attemptTotal} правильных ответов`, leftBoxX + 5, boxY + 20);
+      pdf.text(`${certificateData.attemptPercentage}% правильных ответов`, leftBoxX + 5, boxY + 30);
+      
+      // Right box - Time
+      pdf.setFillColor(245, 245, 245);
+      pdf.rect(rightBoxX, boxY, boxWidth, boxHeight, 'F');
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Время прохождения', rightBoxX + 5, boxY + 10);
+      
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`${certificateData.attemptTimeTaken} секунд`, rightBoxX + 5, boxY + 20);
+      pdf.text(`Завершен: ${certificateData.attemptCompletedAt}`, rightBoxX + 5, boxY + 30);
+      
+      // Certificate number section
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(102, 102, 102);
+      pdf.text('Номер диплома', 105, 200, { align: 'center' });
+      
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 51, 51);
+      pdf.text(certificateData.certificateNumber, 105, 210, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(102, 102, 102);
+      pdf.text(`Выдан: ${certificateData.certificateIssuedAt}`, 105, 220, { align: 'center' });
+      
+      // Footer section
+      const footerY = 240;
+      
+      // Left side - Director info
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(102, 102, 102);
+      pdf.text('Генеральный директор ООО «ПРОФ-АКТИВ»', 20, footerY);
+      pdf.text('Ворожищева Н.Г.', 20, footerY + 8);
+      
+      // Right side - Date
+      pdf.text('Дата выдачи', 150, footerY);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(51, 51, 51);
+      pdf.text(certificateData.certificateIssuedAt, 150, footerY + 8);
+      
+      // Download the PDF
+      const fileName = `Диплом_${certificateData.userLastName}_${certificateData.userFirstName}_${certificateData.certificateNumber}.pdf`;
+      pdf.save(fileName);
+      
+      console.log('Enhanced PDF generated successfully');
+    }
+
+    // Fallback PDF generation method
+    async function generateSimplePDF() {
+      if (typeof window.jspdf === 'undefined') {
+        throw new Error('jsPDF library not loaded');
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      // Set font with proper encoding for Cyrillic
+      pdf.setFont('helvetica', 'normal');
+      
+      // Add title
+      pdf.setFontSize(24);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('ДИПЛОМ', 105, 30, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Диплом о прохождении курса повышения квалификации', 105, 40, { align: 'center' });
+      
+      // Add content
+      pdf.setFontSize(14);
+      pdf.text('Настоящим дипломом удостоверяется, что', 105, 60, { align: 'center' });
+      
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${certificateData.userLastName} ${certificateData.userFirstName} ${certificateData.userPatronymic}`, 105, 75, { align: 'center' });
+      
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('прошел(ла) курс по теме:', 105, 90, { align: 'center' });
+      
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(certificateData.courseName, 105, 105, { align: 'center' });
+      
+      // Add details
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Результат теста: ${certificateData.attemptScore} из ${certificateData.attemptTotal} правильных ответов`, 20, 130);
+      pdf.text(`Процент правильных ответов: ${certificateData.attemptPercentage}%`, 20, 140);
+      pdf.text(`Время прохождения: ${certificateData.attemptTimeTaken} секунд`, 20, 150);
+      pdf.text(`Завершен: ${certificateData.attemptCompletedAt}`, 20, 160);
+      
+      // Add certificate number
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`Номер диплома: ${certificateData.certificateNumber}`, 105, 180, { align: 'center' });
+      pdf.text(`Выдан: ${certificateData.certificateIssuedAt}`, 105, 190, { align: 'center' });
+      
+      // Add footer
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Генеральный директор ООО «ПРОФ-АКТИВ»', 20, 250);
+      pdf.text('Ворожищева Н.Г.', 20, 260);
+      
+      pdf.text(`Дата выдачи: ${certificateData.certificateIssuedAt}`, 150, 250);
+      
+      // Download the PDF
+      const fileName = `Диплом_${certificateData.userLastName}_${certificateData.userFirstName}_${certificateData.certificateNumber}.pdf`;
+      pdf.save(fileName);
+      
+      console.log('Simple PDF generated successfully');
     }
   </script>
 {% endblock %}
