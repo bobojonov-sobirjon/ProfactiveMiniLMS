@@ -349,4 +349,45 @@ class QuizCertificateAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    def get_readonly_fields(self, request, obj=None):
+        """Make user and quiz fields read-only when editing existing certificates"""
+        readonly_fields = list(self.readonly_fields)
+        if obj:  # Editing an existing certificate
+            readonly_fields.extend(['user', 'quiz', 'attempt'])
+        return readonly_fields
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """Custom form to prevent modification of user and quiz fields"""
+        form = super().get_form(request, obj, **kwargs)
+        
+        if obj:  # Editing an existing certificate
+            # Make user and quiz fields read-only in the form
+            if 'user' in form.base_fields:
+                form.base_fields['user'].widget.attrs['readonly'] = True
+                form.base_fields['user'].widget.attrs['disabled'] = True
+            if 'quiz' in form.base_fields:
+                form.base_fields['quiz'].widget.attrs['readonly'] = True
+                form.base_fields['quiz'].widget.attrs['disabled'] = True
+            if 'attempt' in form.base_fields:
+                form.base_fields['attempt'].widget.attrs['readonly'] = True
+                form.base_fields['attempt'].widget.attrs['disabled'] = True
+        
+        return form
+    
+    def save_model(self, request, obj, form, change):
+        """Prevent saving if user or quiz fields are being changed"""
+        if change:  # Editing existing certificate
+            # Get the original object from database
+            original_obj = QuizCertificate.objects.get(pk=obj.pk)
+            
+            # Check if user or quiz has been changed
+            if (obj.user_id != original_obj.user_id or 
+                obj.quiz_id != original_obj.quiz_id or 
+                obj.attempt_id != original_obj.attempt_id):
+                from django.contrib import messages
+                messages.error(request, 'Нельзя изменять пользователя, тест или попытку для существующего сертификата!')
+                return
+        
+        super().save_model(request, obj, form, change)
 

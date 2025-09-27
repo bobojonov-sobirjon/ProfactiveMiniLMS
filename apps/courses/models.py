@@ -344,5 +344,17 @@ class QuizCertificate(models.Model):
         if not self.certificate_number:
             import uuid
             self.certificate_number = f"CERT-{uuid.uuid4().hex[:8].upper()}"
+        
+        # Prevent modification of user, quiz, and attempt fields for existing certificates
+        if self.pk:
+            try:
+                original = QuizCertificate.objects.get(pk=self.pk)
+                if (self.user_id != original.user_id or 
+                    self.quiz_id != original.quiz_id or 
+                    self.attempt_id != original.attempt_id):
+                    raise ValidationError("Нельзя изменять пользователя, тест или попытку для существующего сертификата!")
+            except QuizCertificate.DoesNotExist:
+                pass  # New certificate, allow saving
+        
         super().save(*args, **kwargs)
 
