@@ -528,7 +528,7 @@
             {% if quiz_attempt.is_passed and quiz_certificate %}
               <a href="{% url 'courses:quiz_certificate' course.id %}" 
                  class="certificate-button border-2 border-primary text-primary hover:bg-primary hover:text-primary/70 font-semibold rounded-full px-6 py-3 text-center transition-all duration-300">
-                Скачать сертификат
+                Скачать диплом
               </a>
             {% else %}
               <a href="{% url 'courses:start_quiz' course.id %}" 

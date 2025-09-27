@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Сертификат - {{ course.name }}{% endblock %}
+{% block title %}Диплом - {{ course.name }}{% endblock %}
 
 {% block content %}
   <!-- Main -->
@@ -18,13 +18,13 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
             </div>
-            <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">СЕРТИФИКАТ</h1>
-            <p class="text-primary/70 text-lg">Сертификат о прохождении курса повышения квалификации </p>
+            <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">ДИПЛОМ</h1>
+            <p class="text-primary/70 text-lg">Диплом о прохождении курса повышения квалификации </p>
           </div>
 
           <!-- Certificate Content -->
           <div class="text-center mb-8">
-            <p class="text-primary/70 text-lg mb-4">Настоящим сертификатом удостоверяется, что</p>
+            <p class="text-primary/70 text-lg mb-4">Настоящим дипломом удостоверяется, что</p>
             <h2 class="text-2xl md:text-3xl font-bold text-primary mb-6">{{ user.first_name }} {{ user.last_name }} {{ user.patronymic }}</h2>
             <p class="text-primary/70 text-lg mb-6">прошел(ла) курс по теме:</p>
             <h3 class="text-xl md:text-2xl font-semibold text-primary mb-4">{{ course.name }}</h3>
@@ -47,7 +47,7 @@
 
           <!-- Certificate Number -->
           <div class="text-center mb-8">
-            <p class="text-primary/70 text-sm mb-2">Номер сертификата</p>
+            <p class="text-primary/70 text-sm mb-2">Номер диплома</p>
             <p class="text-primary font-mono text-lg font-semibold">{{ certificate.certificate_number }}</p>
             <p class="text-primary/50 text-sm mt-2">Выдан: {{ certificate.issued_at|date:"d.m.Y" }}</p>
           </div>
@@ -57,7 +57,8 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
               <!-- Подпись менеджера -->
               <div class="text-center flex items-center flex-col justify-center order-1 md:order-1">
-                <p class="text-primary/70 text-sm mb-3">Подпись менеджера</p>
+                <p class="text-primary/70 text-sm mb-3">Генеральный директор ООО «ПРОФ-АКТИВ»
+                  Ворожищева Н.Г.</p>
                 <div class="w-48 h-20 md:w-56 md:h-24 mt-4 transform rotate-10">
                   <img src="{% static 'assets/images/1000106674 (1).png' %}" alt="Подпись менеджера" class="w-full h-full object-cover">
                 </div>
@@ -87,7 +88,7 @@
               <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
               </svg>
-              Печать сертификата
+              Печать диплома
             </button>
             
             <button onclick="downloadCertificate()" 
@@ -95,12 +96,12 @@
               <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
-              Скачать PDF
+              Скачать PDF диплома
             </button>
             
             <a href="{% url 'courses:my_courses' %}" 
                class="text-primary hover:text-primary/70 font-semibold underline">
-              Вернуться к курсам
+              Вернуться к курсам повышения квалификации
             </a>
           </div>
         </div>
@@ -146,7 +147,7 @@
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Сертификат - {{ course.name }}</title>
+          <title>Диплом - {{ course.name }}</title>
           <style>
             body { 
               font-family: Arial, sans-serif; 
@@ -215,7 +216,7 @@
         <body>
           <div class="certificate">
             <div class="header">
-              <h1>СЕРТИФИКАТ</h1>
+              <h1>ДИПЛОМ</h1>
               <p>О прохождении теста</p>
             </div>
             
@@ -241,17 +242,21 @@
             </div>
             
             <div class="certificate-number">
-              <p>Номер сертификата: {{ certificate.certificate_number }}</p>
+              <p>Номер диплома: {{ certificate.certificate_number }}</p>
               <p>Выдан: {{ certificate.issued_at|date:"d.m.Y" }}</p>
             </div>
             
             <div class="footer">
               <div>
-                <p>Подпись администратора</p>
+                <p>Подпись менеджера</p>
                 <div style="width: 150px; height: 50px; border-bottom: 2px solid #333; margin-top: 10px;"></div>
               </div>
               <div>
-                <p>Дата выдачи: {{ certificate.issued_at|date:"d.m.Y" }}</p>
+                <p>Подпись менеджера</p>
+                <div style="width: 150px; height: 50px; border-bottom: 2px solid #333; margin-top: 10px;"></div>
+              </div>
+              <div>
+                  <p>Дата выдачи: {{ certificate.issued_at|date:"d.m.Y" }}</p>
               </div>
             </div>
           </div>
