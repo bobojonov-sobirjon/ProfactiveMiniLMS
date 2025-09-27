@@ -19,26 +19,26 @@
               </svg>
             </div>
             <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">СЕРТИФИКАТ</h1>
-            <p class="text-primary/70 text-lg">О прохождении теста</p>
+            <p class="text-primary/70 text-lg">Сертификат о прохождении курса повышения квалификации </p>
           </div>
 
           <!-- Certificate Content -->
           <div class="text-center mb-8">
-            <p class="text-primary/70 text-lg mb-4">Настоящим удостоверяется, что</p>
+            <p class="text-primary/70 text-lg mb-4">Настоящим сертификатом удостоверяется, что</p>
             <h2 class="text-2xl md:text-3xl font-bold text-primary mb-6">{{ user.first_name }} {{ user.last_name }} {{ user.patronymic }}</h2>
-            <p class="text-primary/70 text-lg mb-6">успешно прошел(а) тест по курсу</p>
+            <p class="text-primary/70 text-lg mb-6">прошел(ла) курс по теме:</p>
             <h3 class="text-xl md:text-2xl font-semibold text-primary mb-4">{{ course.name }}</h3>
             <p class="text-primary/70 text-lg mb-6">{{ quiz.title }}</p>
           </div>
 
           <!-- Certificate Details -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-primary/5 rounded-2xl p-6">
+            <div class="bg-primary/5 rounded-2xl p-6 flex flex-col items-center justify-center sm:block">
               <h4 class="font-semibold text-primary mb-2">Результат теста</h4>
               <p class="text-primary/70">{{ attempt.score }} из {{ attempt.answers|length }} правильных ответов</p>
               <p class="text-primary/70">{{ attempt.percentage|floatformat:1 }}% правильных ответов</p>
             </div>
-            <div class="bg-primary/5 rounded-2xl p-6">
+            <div class="bg-primary/5 rounded-2xl p-6 flex flex-col items-center justify-center sm:block">
               <h4 class="font-semibold text-primary mb-2">Время прохождения</h4>
               <p class="text-primary/70">{{ attempt.time_taken|floatformat:0 }} секунд</p>
               <p class="text-primary/70">Завершен: {{ attempt.completed_at|date:"d.m.Y H:i" }}</p>
@@ -53,15 +53,27 @@
           </div>
 
           <!-- Certificate Footer -->
-          <div class="border-t border-primary/20 pt-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div class="text-center md:text-left">
-                <p class="text-primary/70 text-sm">Подпись администратора</p>
-                <div class="w-32 h-16 border-b-2 border-primary/30 mt-2"></div>
+          <div class="border-t border-primary/20 pt-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4">
+              <!-- Подпись менеджера -->
+              <div class="text-center flex items-center flex-col justify-center order-1 md:order-1">
+                <p class="text-primary/70 text-sm mb-3">Подпись менеджера</p>
+                <div class="w-48 h-20 md:w-56 md:h-24 mt-4 transform rotate-1">
+                  <img src="{% static 'assets/images/1000106674 (1).png' %}" alt="Подпись менеджера" class="w-full h-full object-cover">
+                </div>
               </div>
-              <div class="text-center">
-                <p class="text-primary/70 text-sm">Дата выдачи</p>
-                <p class="text-primary font-semibold">{{ certificate.issued_at|date:"d.m.Y" }}</p>
+              
+              <!-- Логотип -->
+              <div class="text-center flex items-center justify-center order-2 md:order-2">
+                <div class="w-48 h-48 md:w-60 md:h-60">
+                  <img src="{% static 'assets/images/IMG-20250731-WA0078 (1).png' %}" alt="Логотип" class="w-full h-full object-contain">
+                </div>
+              </div>
+              
+              <!-- Дата выдачи -->
+              <div class="text-center flex items-center flex-col justify-center order-3 md:order-3">
+                <p class="text-primary/70 text-sm mb-2">Дата выдачи</p>
+                <p class="text-primary font-semibold text-lg">{{ certificate.issued_at|date:"d.m.Y" }}</p>
               </div>
             </div>
           </div>
