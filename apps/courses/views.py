@@ -512,7 +512,7 @@ Email: {email}
             
             return JsonResponse({
                 'success': True,
-                'message': 'Ваша заявка отправлена администратору на рассмотрение'
+                'message': 'Спасибо за заявку! В ближайшее время менеджер с вами свяжется.'
             })
             
         except Exception as e:
